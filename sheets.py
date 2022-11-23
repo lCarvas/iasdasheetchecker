@@ -16,8 +16,9 @@ from googleapiclient.errors import HttpError
 SCOPES = ['https://www.googleapis.com/auth/spreadsheets.readonly']
 
 # The ID and range of a sample spreadsheet.
-SAMPLE_SPREADSHEET_ID = '1SdZGuAU3WBXOrxiPzJaFSoSTatwcYFy6tkEvsbU6uAE'
-SAMPLE_RANGE_NAME = 'Main!A2:L'
+SPREADSHEET_ID = '1SdZGuAU3WBXOrxiPzJaFSoSTatwcYFy6tkEvsbU6uAE'
+SAMPLE_RANGE_NAME = 'Form responses 1!B2:L'
+DATE_RANGE_NAME = 'MAIN!A2:A'
 
 
 def main():
@@ -47,17 +48,29 @@ def main():
 
         # Call the Sheets API
         sheet = service.spreadsheets()
-        result = sheet.values().get(spreadsheetId=SAMPLE_SPREADSHEET_ID,
+        result = sheet.values().get(spreadsheetId=SPREADSHEET_ID,
                                     range=SAMPLE_RANGE_NAME).execute()
         values = result.get('values', [])
-
         if not values:
             print('No data found.')
             return
 
+        result = sheet.values().get(spreadsheetId=SPREADSHEET_ID,
+                                    range=DATE_RANGE_NAME).execute()
+        dates = result.get('values', [])
+        if not dates:
+            print('No data found.')
+            return
+
+
         for row in values:
-            if today <= datetime.datetime.strptime(row[0], '%d/%m/%Y'):
-                print(row)
+            if today <= datetime.datetime.strptime(row[0], '%d/%m/%Y '):
+                if row[1] == 'Novo Hinário':
+                    fnh = open('novo hinário.txt','x')
+                    fnh.write(f'{row[1]}\n 1º{row[2]} 2º{row[3]}')
+                    print(row)
+        
+
     except HttpError as err:
         print(err)
 
