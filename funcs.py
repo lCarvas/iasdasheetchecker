@@ -12,16 +12,20 @@ def number_get(Iurl):
     import urllib.request
     import json
     import urllib
+    import validators
 
     params = {"format": "json", "url": "%s" % Iurl}
     url = "https://www.youtube.com/oembed"
     query_string = urllib.parse.urlencode(params)
     url = url + "?" + query_string
 
-    with urllib.request.urlopen(url) as response:
-        response_text = response.read()
-        data = json.loads(response_text.decode())
-        title = data['title']
+    if validators.url(Iurl):
+        with urllib.request.urlopen(url) as response:
+            response_text = response.read()
+            data = json.loads(response_text.decode())
+            title = data['title']
+    else:
+        title = Iurl
     
     # got from https://stackoverflow.com/a/4510805
     for i, c in enumerate(title):
@@ -30,3 +34,14 @@ def number_get(Iurl):
             break
 
     return title
+
+def hymn_file_writing(batfile,txtfile,frows):
+    dic = {
+        'Novo Hinário':'NV',
+        'Culto':'C',
+        'Escola Sabatina':'ES',
+        'Momento Especial':'ME'
+    }
+    batfile.write(f'start https://www.google.com/search?q={dic[f"{frows[1]}"]}\nstart {frows[2]}\nstart {frows[3]}\n')
+    txtfile.write(f'{frows[1]}\n{number_get(frows[2])}\n{number_get(frows[3])}\n\n')
+
