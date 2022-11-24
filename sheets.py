@@ -17,9 +17,9 @@ SCOPES = ['https://www.googleapis.com/auth/spreadsheets.readonly']
 SPREADSHEET_ID = '1SdZGuAU3WBXOrxiPzJaFSoSTatwcYFy6tkEvsbU6uAE'
 SAMPLE_RANGE_NAME = 'Main!A2:L'
 
-maindir = os.path.join(Path.home(), 'Desktop\\AutoMM\\')
-today = datetime.datetime.now().strftime('%d/%m/%Y')
-today = datetime.datetime.strptime(today,'%d/%m/%Y')
+todaystr = datetime.datetime.now().strftime('%d-%m-%Y')
+today = datetime.datetime.strptime(todaystr,'%d-%m-%Y')
+maindir = os.path.join(Path.home(), f'Desktop\\AutoMM\\{todaystr}\\')
 
 
 
@@ -69,19 +69,24 @@ def main():
         batfile = open(maindir + 'Open Me.bat','w')
         batfile.write('@echo off\n')
 
+        #TODO Create a txt file with the info necessary
+        # Start the txt file
+        txtfile = open(maindir + f'{todaystr}.txt','w')
+        txtfile.write(f'Programa {todaystr}')
+
         for row in reversed(values):
             if today <= datetime.datetime.strptime(row[0], '%d/%m/%Y'):
-                #TODO Create a txt file with the info necessary, 
                 if row[1] == 'Novo Hinário':
                     if nhi == 0:
-                        batfile.write(f'::Novo Hinário\nstart {row[2]}\nstart {row[3]}\n\n')
+                        batfile.write(f'::Novo Hinário\nstart https://www.google.com/search?q=NH\nstart {row[2]}\nstart {row[3]}\n\n')
+                        txtfile.write(f'')
                         nhi += 1
                     else:
                         pass
 
                 elif row[1] == 'Culto':
                     if ci == 0:
-                        batfile.write(f'::Culto\nstart {row[2]}\nstart {row[3]}\n\n')
+                        batfile.write(f'::Culto\nstart https://www.google.com/search?q=C\nstart {row[2]}\nstart {row[3]}\n\n')
                         ci += 1
                     else: 
                         pass
@@ -89,7 +94,7 @@ def main():
                 #TODO Adicionar auto video carta missionaria at some point
                 elif row[1] == 'Escola Sabatina':
                     if esi == 0:
-                        batfile.write(f'::Escola Sabatina\nstart {row[2]}\nstart {row[3]}\n\n')
+                        batfile.write(f'::Escola Sabatina\nstart https://www.google.com/search?q=ES\nstart {row[2]}\nstart {row[3]}\n\n')
                         esi += 1
                     else:
                         pass
@@ -100,7 +105,7 @@ def main():
                             checkstart = '::Sem Música'
                         else:
                             checkstart = f'start {row[11]}'
-                        batfile.write(f'::Momento Especial\n::{row[10]}\n{checkstart}\n\n')
+                        batfile.write(f'::Momento Especial\nstart https://www.google.com/search?q=ME\n::{row[10]}\n{checkstart}\n\n')
                         mei += 1
                     else:
                         pass
