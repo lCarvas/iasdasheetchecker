@@ -91,15 +91,14 @@ def main():
             if today <= datetime.datetime.strptime(row[0], '%d/%m/%Y'):
                 if row[1] == 'Novo Hinário':
                     if nhi == 0:
-                        batfile.write(f'::Novo Hinário\nstart https://www.google.com/search?q=NH\nstart {row[2]}\nstart {row[3]}\n\n')
-                        txtfile.write(f'Novo Hinário\n{number_get(row[2])}\n{number_get(row[3])}\n\n')
+                        hymn_file_writing(batfile,txtfile,row)
                         nhi += 1
                     else:
                         pass
 
                 elif row[1] == 'Culto':
                     if ci == 0:
-                        batfile.write(f'::Culto\nstart https://www.google.com/search?q=C\nstart {row[2]}\nstart {row[3]}\n\n')
+                        hymn_file_writing(batfile,txtfile,row)
                         ci += 1
                     else: 
                         pass
@@ -107,7 +106,7 @@ def main():
                 #TODO Adicionar auto video carta missionaria at some point
                 elif row[1] == 'Escola Sabatina':
                     if esi == 0:
-                        batfile.write(f'::Escola Sabatina\nstart https://www.google.com/search?q=ES\nstart {row[2]}\nstart {row[3]}\n\n')
+                        hymn_file_writing(batfile,txtfile,row)
                         esi += 1
                     else:
                         pass
