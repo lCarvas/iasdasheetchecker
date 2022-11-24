@@ -8,7 +8,7 @@ from googleapiclient.errors import HttpError
 import datetime
 from pathlib import Path
 import os
-from funcs import satcalc
+from funcs import *
 
 
 # If modifying these scopes, delete the file token.json.
@@ -26,6 +26,7 @@ weekday = datetime.datetime.weekday(today)
 # Main Working Directory
 maindir = os.path.join(Path.home(), f'Desktop\\AutoMM\\{satcalc(today,weekday)}\\')
 
+# got from https://stackoverflow.com/a/44352931
 def resource_path(relative_path):
     import sys
     """ Get absolute path to resource, works for dev and for PyInstaller """
@@ -67,6 +68,7 @@ def main():
             print('No data found.')
             return
 
+    # ----- start of file creation -----
 
         os.makedirs(os.path.dirname(maindir), exist_ok=True)
 
@@ -83,14 +85,14 @@ def main():
         #TODO Create a txt file with the info necessary
         # Start the txt file
         txtfile = open(maindir + f'{todaystr}.txt','w')
-        txtfile.write(f'Programa {todaystr}')
+        txtfile.write(f'Programa {todaystr}\n\n')
 
         for row in reversed(values):
             if today <= datetime.datetime.strptime(row[0], '%d/%m/%Y'):
                 if row[1] == 'Novo Hinário':
                     if nhi == 0:
                         batfile.write(f'::Novo Hinário\nstart https://www.google.com/search?q=NH\nstart {row[2]}\nstart {row[3]}\n\n')
-                        txtfile.write(f'')
+                        txtfile.write(f'Novo Hinário\n{number_get(row[2])}\n{number_get(row[3])}\n\n')
                         nhi += 1
                     else:
                         pass
