@@ -19,8 +19,7 @@ SPREADSHEET_ID = '1SdZGuAU3WBXOrxiPzJaFSoSTatwcYFy6tkEvsbU6uAE'
 SAMPLE_RANGE_NAME = 'Main!A2:L'
 
 # date related stuff
-todaystr = datetime.datetime.now().strftime('%d-%m-%Y')
-today = datetime.datetime.strptime(todaystr,'%d-%m-%Y')
+today = datetime.datetime.strptime(datetime.datetime.now().strftime('%d-%m-%Y'),'%d-%m-%Y')
 weekday = datetime.datetime.weekday(today)
 
 # Main Working Directory
@@ -72,56 +71,37 @@ def main():
 
         os.makedirs(os.path.dirname(maindir), exist_ok=True)
 
-        # Index Variables
-        nhi = 0
-        ci = 0
-        esi = 0
-        mei = 0
+        dic = {
+            'Novo Hinário':['NV',0],
+            'Culto':['C',0],
+            'Escola Sabatina':['ES',0],
+            'Momento Especial':['ME',0]
+        }
 
         # Start the bat file
         batfile = open(maindir + 'Open Me.bat','w')
         batfile.write('@echo off\n')
 
-        #TODO Create a txt file with the info necessary
         # Start the txt file
-        txtfile = open(maindir + f'{todaystr}.txt','w')
-        txtfile.write(f'Programa {todaystr}\n\n')
+        txtfile = open(maindir + f'{satcalc(today,weekday)}.txt','w')
+        txtfile.write(f'Programa {satcalc(today,weekday)}\n\n')
 
+    #TODO Adicionar auto video carta missionaria at some point
         for row in reversed(values):
             if today <= datetime.datetime.strptime(row[0], '%d/%m/%Y'):
-                if row[1] == 'Novo Hinário':
-                    if nhi == 0:
-                        hymn_file_writing(batfile,txtfile,row)
-                        nhi += 1
-                    else:
-                        pass
-
-                elif row[1] == 'Culto':
-                    if ci == 0:
-                        hymn_file_writing(batfile,txtfile,row)
-                        ci += 1
-                    else: 
-                        pass
-                
-                #TODO Adicionar auto video carta missionaria at some point
-                elif row[1] == 'Escola Sabatina':
-                    if esi == 0:
-                        hymn_file_writing(batfile,txtfile,row)
-                        esi += 1
-                    else:
-                        pass
-                
-                elif row[1] == 'Momento Especial':
-                    if mei == 0:
+                if row[1] == 'Momento Especial':
+                    if dic['Momento Especial'][1] == 0:
                         if row[11] == 'Não':
                             checkstart = '::Sem Música'
                         else:
                             checkstart = f'start {row[11]}'
                         batfile.write(f'::Momento Especial\nstart https://www.google.com/search?q=ME\n::{row[10]}\n{checkstart}\n\n')
-                        mei += 1
+                        txtfile.write(f'{row[1]}\n{row[10]}\n{row[11]}\n\n')
+                        dic['Momento Especial'][1] += 1
                     else:
                         pass
-
+                else:
+                    file_writing(batfile,txtfile,row,dic)
 
     except HttpError as err:
         print(err)

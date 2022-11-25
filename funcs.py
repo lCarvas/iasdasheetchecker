@@ -35,13 +35,28 @@ def number_get(Iurl):
 
     return title
 
-def hymn_file_writing(batfile,txtfile,frows):
-    dic = {
-        'Novo Hinário':'NV',
-        'Culto':'C',
-        'Escola Sabatina':'ES',
-        'Momento Especial':'ME'
-    }
-    batfile.write(f'start https://www.google.com/search?q={dic[f"{frows[1]}"]}\nstart {frows[2]}\nstart {frows[3]}\n')
-    txtfile.write(f'{frows[1]}\n{number_get(frows[2])}\n{number_get(frows[3])}\n\n')
+def file_writing(batfile,txtfile,frows,fdic):
+    if fdic[f'{frows[1]}'][1] == 0:
+        batfile.write(f'start https://www.google.com/search?q={fdic[f"{frows[1]}"][0]}\n')
+        for i in range(2,4):
+            if not frows[i].isdigit():
+                batfile.write(f'start {frows[i]}\n')
 
+        txtfile.write(f'{frows[1]}\n{number_get(frows[2])}\n{number_get(frows[3])}\n\n')
+
+        if frows[1] == 'Culto' or frows[1] == 'Escola Sabatina':
+            if frows[4] != '':
+                batfile.write(f'start {frows[4].replace("open?","uc?")}&export=download\n')
+            else:
+                batfile.write('\n')
+           #get file name txtfile.write()
+
+            if frows[1] == 'Escola Sabatina':
+                txtfile.write(f'{frows[5]}\n\n')
+
+        fdic[f'{frows[1]}'][1] += 1
+
+
+
+# TODO add conditional writing depending on type of forms
+# TODO objetive: clean Momento Especial and add possibility for expanding ES   
