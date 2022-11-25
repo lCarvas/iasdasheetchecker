@@ -7,9 +7,10 @@ Simple program to aid in the work of the Multimedia team of IASDA.
 	 - Show Date of Program
 	 - Organise file by form category
 	 - Get Hymn Numbers from Spreadsheet and add them to a txt file
+	 - Show ES programme in text file
 	 
  - ## Bat File
 	 - Automatically open Hymn links and separate them by form category
+	 - Automatically download Necessary Files
  - ## TBD
-	 - Show ES programme in text file
-	 - Automatically download and extract name of Necessary Files 
+	 - extract name of Necessary Files 
