@@ -46,7 +46,7 @@ def file_writing(batfile,txtfile,frows,fdic):
 
         if frows[1] == 'Culto' or frows[1] == 'Escola Sabatina':
             if frows[4] != '':
-                batfile.write(f'start {frows[4].replace("open?","uc?")} "&export=download"\n')
+                batfile.write(f'start {frows[4].replace("open?","uc?")}&export=download\n')
             else:
                 batfile.write('\n')
            #get file name txtfile.write()
