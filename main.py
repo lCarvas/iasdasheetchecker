@@ -82,7 +82,6 @@ def main():
         batfile = open(maindir + 'Open Me.bat','w')
         batfile.write('@echo off\n')
 
-        #TODO Create a txt file with the info necessary
         # Start the txt file
         txtfile = open(maindir + f'{satcalc(today,weekday)}.txt','w')
         txtfile.write(f'Programa {satcalc(today,weekday)}\n\n')
@@ -102,7 +101,7 @@ def main():
                     else:
                         pass
                 else:
-                    hymn_file_writing(batfile,txtfile,row,dic)
+                    file_writing(batfile,txtfile,row,dic)
 
     except HttpError as err:
         print(err)
