@@ -11,6 +11,5 @@ Simple program to aid in the work of the Multimedia team of IASDA.
 	 
  - ## Bat File
 	 - Automatically open Hymn links and separate them by form category
-	 - Automatically download Necessary Files
  - ## TBD
-	 - extract name of Necessary Files 
+	 - Automatically download and extract name of Necessary Files 
