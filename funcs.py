@@ -44,3 +44,13 @@ def hymn_file_writing(batfile,txtfile,frows):
     }
     batfile.write(f'start https://www.google.com/search?q={dic[f"{frows[1]}"]}\nstart {frows[2]}\nstart {frows[3]}\n')
     txtfile.write(f'{frows[1]}\n{number_get(frows[2])}\n{number_get(frows[3])}\n\n')
+
+# TODO add the anti repeated entry to hymn_file_writing or a new function using a dictionary
+dic = {
+        'Novo Hinário':1,
+        'Culto':'C',
+        'Escola Sabatina':'ES',
+        'Momento Especial':'ME'
+    }
+dic['Novo Hinário'] += 1
+print(dic['Novo Hinário'])
