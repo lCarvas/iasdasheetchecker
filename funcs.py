@@ -58,5 +58,4 @@ def file_writing(batfile,txtfile,frows,fdic):
 
 
 
-# TODO add conditional writing depending on type of forms
-# TODO objetive: clean Momento Especial and add possibility for expanding ES   
+# TODO objetive: clean Momento Especial 
