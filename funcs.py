@@ -61,4 +61,4 @@ def file_writing(batfile,txtfile,frows,fdic):
 # TODO objetive: clean Momento Especial
 # TODO add type of doxology hymn to txt file and bat file if needed
 # TODO add doxology playlist link to bat file
-# TODO download necessary files (bat file) and get their names, add names to txt file
+# TODO #7 download necessary files (bat file) and get their names, add names to txt file
