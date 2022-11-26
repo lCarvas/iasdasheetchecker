@@ -1,3 +1,6 @@
+from __future__ import print_function
+
+
 def satcalc(ftoday,fweekday):
     import datetime
     if fweekday == 6:
@@ -46,18 +49,16 @@ def file_writing(batfile,txtfile,frows,fdic):
 
         if frows[1] == 'Culto' or frows[1] == 'Escola Sabatina':
             if frows[4] != '':
-                batfile.write(f'start {frows[4].replace("open?","uc?")}&export=download\n')
+                #batfile.write(f'start {frows[4].replace("open?","uc?")}&export=download\n')
+                txtfile.write(f'{necfiles(frows[4])}\n\n')
             else:
                 batfile.write('\n')
-           #get file name txtfile.write()
+                txtfile.write('\n')
 
             if frows[1] == 'Escola Sabatina':
                 txtfile.write(f'{frows[5]}\n\n')
 
         fdic[f'{frows[1]}'][1] += 1
-
-
-
 
 
 def necfiles(dlink):
@@ -67,7 +68,6 @@ def necfiles(dlink):
     from google_auth_oauthlib.flow import InstalledAppFlow
     from googleapiclient.discovery import build
     from googleapiclient.errors import HttpError
-    from __future__ import print_function
 
     """Shows basic usage of the Drive v3 API.
     Prints the names and ids of the first 10 files the user has access to.
@@ -75,26 +75,26 @@ def necfiles(dlink):
 # If modifying these scopes, delete the file token.json.
     DSCOPES = ['https://www.googleapis.com/auth/drive.metadata.readonly']
 
-    creds = None
+    dcreds = None
     # The file token.json stores the user's access and refresh tokens, and is
     # created automatically when the authorization flow completes for the first
     # time.
     if os.path.exists('tokendrive.json'):
-        creds = Credentials.from_authorized_user_file('tokendrive.json', DSCOPES)
+        dcreds = Credentials.from_authorized_user_file('tokendrive.json', DSCOPES)
     # If there are no (valid) credentials available, let the user log in.
-    if not creds or not creds.valid:
-        if creds and creds.expired and creds.refresh_token:
-            creds.refresh(Request())
+    if not dcreds or not dcreds.valid:
+        if dcreds and dcreds.expired and dcreds.refresh_token:
+            dcreds.refresh(Request())
         else:
             flow = InstalledAppFlow.from_client_secrets_file(
                 'credentials.json', DSCOPES)
-            creds = flow.run_local_server(port=0)
+            dcreds = flow.run_local_server(port=0)
         # Save the credentials for the next run
         with open('tokendrive.json', 'w') as token:
-            token.write(creds.to_json())
+            token.write(dcreds.to_json())
 
     try:
-        service = build('drive', 'v3', credentials=creds)
+        service = build('drive', 'v3', credentials=dcreds)
 
         # Call the Drive v3 API
         results = service.files().list(
@@ -104,6 +104,7 @@ def necfiles(dlink):
         if not items:
             print('No files found.')
             return
+        
         for item in items:
             if dlink[33:] == item['id']:
                 return item['name']
