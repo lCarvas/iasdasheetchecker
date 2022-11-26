@@ -58,5 +58,7 @@ def file_writing(batfile,txtfile,frows,fdic):
 
 
 
-# TODO add conditional writing depending on type of forms
-# TODO objetive: clean Momento Especial and add possibility for expanding ES   
+# TODO objetive: clean Momento Especial
+# TODO add type of doxology hymn to txt file and bat file if needed
+# TODO add doxology playlist link to bat file
+# TODO download necessary files (bat file) and get their names, add names to txt file
