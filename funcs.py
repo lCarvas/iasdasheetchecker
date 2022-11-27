@@ -49,16 +49,18 @@ def number_get(Iurl):
 def file_writing(batfile,txtfile,frows,fdic,fmaindir):
     if fdic[f'{frows[1]}'][1] == 0:
         batfile.write(f'start https://www.google.com/search?q={fdic[f"{frows[1]}"][0]}\n')
+        # Link hinos
         for i in range(2,4):
             if not frows[i].isdigit():
                 batfile.write(f'start {frows[i]}\n')
-
+        # Numero hinos
         txtfile.write(f'{frows[1]}\n{number_get(frows[2])}\n{number_get(frows[3])}\n\n')
 
         if frows[1] == 'Culto' or frows[1] == 'Escola Sabatina':
+            # Programa Escola Sabatina
             if frows[1] == 'Escola Sabatina':
-                txtfile.write(f'{frows[5]}\n\n')
-            
+                txtfile.write(f'{frows[5]}\n\n')            
+            # Doxologia
             elif frows[1] == 'Culto':
                 batfile.write(f'start https://www.youtube.com/playlist?list=PL3sgRPOFYAyxahQy75UOv_wGlAvegskT_\n')
                 for j in range(7,10):
@@ -67,14 +69,11 @@ def file_writing(batfile,txtfile,frows,fdic,fmaindir):
                         txtfile.write(f'{number_get(frows[j])}\n\n')
                     else:
                         txtfile.write(f'{frows[j]}\n')
-
+            # Ficheiros Necessários
             if frows[4] != '':
                 txtfile.write(f'{necfiles(frows[4],fmaindir)}\n\n')
             else:
-                batfile.write('\n')
                 txtfile.write('\n')
-
-
         fdic[f'{frows[1]}'][1] += 1
 
 
@@ -132,4 +131,4 @@ def necfiles(dlink,fmaindir):
         print(f'An error occurred: {error}')
     
 
-# TODO objetive: clean Momento Especial
+# TODO #12 objetive: clean Momento Especial
