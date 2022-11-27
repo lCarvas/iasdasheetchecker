@@ -8,6 +8,12 @@ from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
 from googleapiclient.http import MediaIoBaseDownload
 
+# got from https://stackoverflow.com/a/44352931
+def resource_path(relative_path):
+    import sys
+    """ Get absolute path to resource, works for dev and for PyInstaller """
+    base_path = getattr(sys, '_MEIPASS', os.path.dirname(os.path.abspath(__file__)))
+    return os.path.join(base_path, relative_path)
 
 def satcalc(ftoday,fweekday):
     import datetime
@@ -96,14 +102,14 @@ def necfiles(dlink,fmaindir):
             dcreds.refresh(Request())
         else:
             flow = InstalledAppFlow.from_client_secrets_file(
-                'credentials.json', DSCOPES)
+                resource_path('credentials.json'), DSCOPES)
             dcreds = flow.run_local_server(port=0)
         # Save the credentials for the next run
         with open('tokendrive.json', 'w') as token:
             token.write(dcreds.to_json())
 
     try:
-        service = build('drive', 'v3', credentials=dcreds)
+        service = build('drive', 'v3', credentials=dcreds, static_discovery=False)
 
         # Call the Drive v3 API
         results = service.files().list(
