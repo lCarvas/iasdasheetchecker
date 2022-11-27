@@ -101,7 +101,7 @@ def main():
                     else:
                         pass
                 else:
-                    file_writing(batfile,txtfile,row,dic)
+                    file_writing(batfile,txtfile,row,dic,maindir)
 
     except HttpError as err:
         print(err)
