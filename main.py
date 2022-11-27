@@ -91,11 +91,8 @@ def main():
             if today <= datetime.datetime.strptime(row[0], '%d/%m/%Y'):
                 if row[1] == 'Momento Especial':
                     if dic['Momento Especial'][1] == 0:
-                        if row[11] == 'Não':
-                            checkstart = '::Sem Música'
-                        else:
-                            checkstart = f'start {row[11]}'
-                        batfile.write(f'::Momento Especial\nstart https://www.google.com/search?q=ME\n::{row[10]}\n{checkstart}\n\n')
+                        if row[11] != 'Não':
+                            batfile.write(f'start https://www.google.com/search?q=ME\nstart {row[11]}\n')
                         txtfile.write(f'{row[1]}\n{row[10]}\n{row[11]}\n\n')
                         dic['Momento Especial'][1] += 1
                     else:
