@@ -128,4 +128,3 @@ def necfiles(dlink,fmaindir):
 
 # TODO objetive: clean Momento Especial
 # TODO #9 add type of doxology hymn to txt file and bat file if needed and add doxology playlist link to bat file
-# TODO 
