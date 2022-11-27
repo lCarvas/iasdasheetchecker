@@ -12,7 +12,7 @@ from googleapiclient.http import MediaIoBaseDownload
 def satcalc(ftoday,fweekday):
     import datetime
     if fweekday == 6:
-        saturday = ftoday + datetime.timedelta(days=12-datetime.datetime.weekday(ftoday))  
+        saturday = datetime.datetime.strftime(ftoday + datetime.timedelta(days=12-datetime.datetime.weekday(ftoday)), '%d-%m-%Y')  
     else:
         saturday = datetime.datetime.strftime(ftoday + datetime.timedelta(days=5-datetime.datetime.weekday(ftoday)), '%d-%m-%Y')
     
@@ -56,15 +56,24 @@ def file_writing(batfile,txtfile,frows,fdic,fmaindir):
         txtfile.write(f'{frows[1]}\n{number_get(frows[2])}\n{number_get(frows[3])}\n\n')
 
         if frows[1] == 'Culto' or frows[1] == 'Escola Sabatina':
+            if frows[1] == 'Escola Sabatina':
+                txtfile.write(f'{frows[5]}\n\n')
+            
+            elif frows[1] == 'Culto':
+                batfile.write(f'start https://www.youtube.com/playlist?list=PL3sgRPOFYAyxahQy75UOv_wGlAvegskT_\n')
+                for j in range(7,10):
+                    if frows[j] != 'Normal':
+                        batfile.write(f'start {frows[j]}\n')
+                        txtfile.write(f'{number_get(frows[j])}\n\n')
+                    else:
+                        txtfile.write(f'{frows[j]}\n')
+
             if frows[4] != '':
-                #batfile.write(f'start {frows[4].replace("open?","uc?")}&export=download\n')
                 txtfile.write(f'{necfiles(frows[4],fmaindir)}\n\n')
             else:
                 batfile.write('\n')
                 txtfile.write('\n')
 
-            if frows[1] == 'Escola Sabatina':
-                txtfile.write(f'{frows[5]}\n\n')
 
         fdic[f'{frows[1]}'][1] += 1
 
@@ -123,8 +132,4 @@ def necfiles(dlink,fmaindir):
         print(f'An error occurred: {error}')
     
 
-
-
-
 # TODO objetive: clean Momento Especial
-# TODO #9 add type of doxology hymn to txt file and bat file if needed and add doxology playlist link to bat file
