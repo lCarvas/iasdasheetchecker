@@ -1,4 +1,12 @@
 from __future__ import print_function
+import io
+import os.path
+from google.auth.transport.requests import Request
+from google.oauth2.credentials import Credentials
+from google_auth_oauthlib.flow import InstalledAppFlow
+from googleapiclient.discovery import build
+from googleapiclient.errors import HttpError
+from googleapiclient.http import MediaIoBaseDownload
 
 
 def satcalc(ftoday,fweekday):
@@ -38,7 +46,7 @@ def number_get(Iurl):
 
     return title
 
-def file_writing(batfile,txtfile,frows,fdic):
+def file_writing(batfile,txtfile,frows,fdic,fmaindir):
     if fdic[f'{frows[1]}'][1] == 0:
         batfile.write(f'start https://www.google.com/search?q={fdic[f"{frows[1]}"][0]}\n')
         for i in range(2,4):
@@ -50,7 +58,7 @@ def file_writing(batfile,txtfile,frows,fdic):
         if frows[1] == 'Culto' or frows[1] == 'Escola Sabatina':
             if frows[4] != '':
                 #batfile.write(f'start {frows[4].replace("open?","uc?")}&export=download\n')
-                txtfile.write(f'{necfiles(frows[4])}\n\n')
+                txtfile.write(f'{necfiles(frows[4],fmaindir)}\n\n')
             else:
                 batfile.write('\n')
                 txtfile.write('\n')
@@ -61,19 +69,12 @@ def file_writing(batfile,txtfile,frows,fdic):
         fdic[f'{frows[1]}'][1] += 1
 
 
-def necfiles(dlink):
-    import os.path
-    from google.auth.transport.requests import Request
-    from google.oauth2.credentials import Credentials
-    from google_auth_oauthlib.flow import InstalledAppFlow
-    from googleapiclient.discovery import build
-    from googleapiclient.errors import HttpError
-
+def necfiles(dlink,fmaindir):
     """Shows basic usage of the Drive v3 API.
     Prints the names and ids of the first 10 files the user has access to.
     """
 # If modifying these scopes, delete the file token.json.
-    DSCOPES = ['https://www.googleapis.com/auth/drive.metadata.readonly']
+    DSCOPES = ['https://www.googleapis.com/auth/drive']
 
     dcreds = None
     # The file token.json stores the user's access and refresh tokens, and is
@@ -107,15 +108,24 @@ def necfiles(dlink):
         
         for item in items:
             if dlink[33:] == item['id']:
+                request = service.files().get_media(fileId=item['id'])
+
+                file = io.FileIO(fmaindir + "\\" + item['name'],'w')
+                downloader = MediaIoBaseDownload(file, request)
+                done = False
+                while done is False:
+                    status, done = downloader.next_chunk()
+
                 return item['name']
 
     except HttpError as error:
         # TODO(developer) - Handle errors from drive API.
         print(f'An error occurred: {error}')
+    
+
 
 
 
 # TODO objetive: clean Momento Especial
 # TODO add type of doxology hymn to txt file and bat file if needed
 # TODO add doxology playlist link to bat file
-# TODO #7 download necessary files (bat file) and ---get their names, add names to txt file---
