@@ -52,7 +52,7 @@ def number_get(Iurl):
 
     return title
 
-def file_writing(batfile,txtfile,frows,fdic,fmaindir):
+def file_writing(batfile,txtfile,frows,fdic,fmaindir,fcreds):
     if fdic[f'{frows[1]}'][1] == 0:
         batfile.write(f'start https://www.google.com/search?q={fdic[f"{frows[1]}"][0]}\n')
         # Link hinos
@@ -77,39 +77,18 @@ def file_writing(batfile,txtfile,frows,fdic,fmaindir):
                         txtfile.write(f'{frows[j]}\n')
             # Ficheiros Necessários
             if frows[4] != '':
-                txtfile.write(f'{necfiles(frows[4],fmaindir)}\n\n')
+                txtfile.write(f'{necfiles(frows[4],fmaindir,fcreds)}\n\n')
             else:
                 txtfile.write('\n')
         fdic[f'{frows[1]}'][1] += 1
 
 
-def necfiles(dlink,fmaindir):
+def necfiles(dlink,fmaindir,fcreds):
     """Shows basic usage of the Drive v3 API.
     Prints the names and ids of the first 10 files the user has access to.
     """
-# If modifying these scopes, delete the file token.json.
-    DSCOPES = ['https://www.googleapis.com/auth/drive']
-
-    dcreds = None
-    # The file token.json stores the user's access and refresh tokens, and is
-    # created automatically when the authorization flow completes for the first
-    # time.
-    if os.path.exists('tokendrive.json'):
-        dcreds = Credentials.from_authorized_user_file('tokendrive.json', DSCOPES)
-    # If there are no (valid) credentials available, let the user log in.
-    if not dcreds or not dcreds.valid:
-        if dcreds and dcreds.expired and dcreds.refresh_token:
-            dcreds.refresh(Request())
-        else:
-            flow = InstalledAppFlow.from_client_secrets_file(
-                resource_path('credentials.json'), DSCOPES)
-            dcreds = flow.run_local_server(port=0)
-        # Save the credentials for the next run
-        with open('tokendrive.json', 'w') as token:
-            token.write(dcreds.to_json())
-
     try:
-        service = build('drive', 'v3', credentials=dcreds, static_discovery=False)
+        service = build('drive', 'v3', credentials=fcreds, static_discovery=False)
 
         # Call the Drive v3 API
         results = service.files().list(
@@ -135,6 +114,3 @@ def necfiles(dlink,fmaindir):
     except HttpError as error:
         # TODO(developer) - Handle errors from drive API.
         print(f'An error occurred: {error}')
-    
-
-# TODO #12 objetive: clean Momento Especial

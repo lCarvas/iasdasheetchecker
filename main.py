@@ -12,7 +12,7 @@ from funcs import *
 
 
 # If modifying these scopes, delete the file token.json.
-SCOPES = ['https://www.googleapis.com/auth/spreadsheets.readonly']
+SCOPES = ['https://www.googleapis.com/auth/spreadsheets.readonly', 'https://www.googleapis.com/auth/drive']
 
 # The ID and range of the spreadsheet.
 SPREADSHEET_ID = '1SdZGuAU3WBXOrxiPzJaFSoSTatwcYFy6tkEvsbU6uAE'
@@ -98,7 +98,7 @@ def main():
                     else:
                         pass
                 else:
-                    file_writing(batfile,txtfile,row,dic,maindir)
+                    file_writing(batfile,txtfile,row,dic,maindir,creds)
 
     except HttpError as err:
         print(err)
