@@ -75,7 +75,13 @@ def main():
             'Novo Hinário':['NV',0],
             'Culto':['C',0],
             'Escola Sabatina':['ES',0],
-            'Momento Especial':['ME',0]
+            'Momento Especial':['ME',0,{
+                'Durante a Escola Sabatina':0,
+                'Após a Escola Sabatina':0,
+                'Antes do Culto':0,
+                'Durante o Culto':0,
+                'Após o Culto':0
+            }]
         }
 
         # Start the bat file
@@ -91,12 +97,18 @@ def main():
             if today <= datetime.datetime.strptime(row[0], '%d/%m/%Y'):
                 if row[1] == 'Momento Especial':
                     if dic['Momento Especial'][1] == 0:
-                        if row[11] != 'Não':
-                            batfile.write(f'start https://www.google.com/search?q=ME\nstart {row[11]}\n')
-                        txtfile.write(f'{row[1]}\n{row[10]}\n{row[11]}\n\n')
+                        batfile.write(f'start https://www.google.com/search?q=ME')
+                        txtfile.write(f'{row[1]}')
                         dic['Momento Especial'][1] += 1
-                    else:
-                        pass
+                    for time in dic['Momento Especial'][2].keys():
+                        if time == row[10]:
+                            if dic['Momento Especial'][2][row[10]] == 0:
+                                if row[11] != 'Não':
+                                    batfile.write(f'\nstart {row[11]}\n')
+                                txtfile.write(f'\n{row[10]}\n{number_get(row[11])}\n\n')
+                                dic['Momento Especial'][2][row[10]] += 1
+                            else:
+                                pass
                 else:
                     file_writing(batfile,txtfile,row,dic,maindir,creds)
 
@@ -106,3 +118,4 @@ def main():
 
 if __name__ == '__main__':
     main()
+input('\nFinished.')
