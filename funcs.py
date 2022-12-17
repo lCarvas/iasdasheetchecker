@@ -30,6 +30,7 @@ def number_get(Iurl):
     import json
     import urllib
     import validators
+    from cleantext import clean
 
     params = {"format": "json", "url": "%s" % Iurl}
     url = "https://www.youtube.com/oembed"
@@ -40,7 +41,7 @@ def number_get(Iurl):
         with urllib.request.urlopen(url) as response:
             response_text = response.read()
             data = json.loads(response_text.decode())
-            title = data['title']
+            title = clean(data['title'], no_emoji=True)
     else:
         title = Iurl
     
@@ -106,9 +107,10 @@ def necfiles(dlink,fmaindir,fcreds):
                 file = io.FileIO(fmaindir + "\\" + item['name'],'w')
                 downloader = MediaIoBaseDownload(file, request)
                 done = False
+                print(f'Downloading {item["name"]} 0%.')
                 while done is False:
                     status, done = downloader.next_chunk()
-
+                    print(f'Downloading {item["name"]} {int(status.progress() * 100)}%.')         
                 return item['name']
 
     except HttpError as error:
