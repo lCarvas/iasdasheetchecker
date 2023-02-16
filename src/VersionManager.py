@@ -18,14 +18,14 @@ class VersionManager:
         return currentVersion >= VersionManager.getLatestTag()
     
     @staticmethod
-    def download_file(url, filename=''):
+    def download_file():
         try:
-            with requests.get(url) as req:
-                with open(filename, 'wb') as f:
+            with requests.get('https://github.com/lcarvas/iasdasheetchecker/releases/latest/download/MMACP.exe') as req:
+                with open('MMACP.exe', 'wb') as f:
                     for chunk in req.iter_content(chunk_size=8192):
                         if chunk:
                             f.write(chunk)
-                return filename
+                return 'MMACP.exe'
         except Exception as e:
             print(e)
             return None
