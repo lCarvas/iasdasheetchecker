@@ -667,8 +667,8 @@ def number_get(Iurl):
     return title
 
 def file_writing(batfile,txtfile,frows,fdic,fmaindir,fcreds):
-    print(f'Starting {frows[1]}')
     if fdic[f'{frows[1]}'][1] == 0:
+        print(f'Starting {frows[1]}')
         batfile.write(f'start https://www.google.com/search?q={fdic[f"{frows[1]}"][0]}\n')
         txtfile.write(f'{frows[1]}\n')
         if frows[1] != 'Anúncios':

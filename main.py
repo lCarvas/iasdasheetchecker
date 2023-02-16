@@ -12,7 +12,10 @@ from funcs import *
 
 
 # If modifying these scopes, delete the file token.json.
-SCOPES = ['https://www.googleapis.com/auth/spreadsheets.readonly', 'https://www.googleapis.com/auth/drive']
+SCOPES = [
+    'https://www.googleapis.com/auth/spreadsheets.readonly', 
+    'https://www.googleapis.com/auth/drive.readonly'
+]
 
 # The ID and range of the spreadsheet.
 SPREADSHEET_ID = '1SdZGuAU3WBXOrxiPzJaFSoSTatwcYFy6tkEvsbU6uAE'
