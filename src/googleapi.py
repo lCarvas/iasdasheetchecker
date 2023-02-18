@@ -19,6 +19,7 @@ class googleapis:
     
     SAMPLE_RANGE_NAME = 'Main!A2:L'
     SPREADSHEET_ID = Config.getkeys()['spreadsheetid']
+    DRIVEFOLDER_ID = Config.getkeys()['driveid']
 
     @staticmethod
     def creds():
@@ -45,9 +46,29 @@ class googleapis:
             return creds
 
     @staticmethod
-    def sheetsapi():        
+    def sheetsapi():   
+        creds = None
+        # The file token.json stores the user's access and refresh tokens, and is
+        # created automatically when the authorization flow completes for the first
+        # time.
+        if os.path.exists(os.path.abspath('config/token.json')):
+            creds = Credentials.from_authorized_user_file(os.path.abspath('config/token.json'), googleapis.SCOPES)
+        # If there are no (valid) credentials available, let the user log in.
+        if not creds or not creds.valid:
+            if creds and creds.expired and creds.refresh_token:
+                creds.refresh(Request())
+            else:
+                flow = InstalledAppFlow.from_client_secrets_file(
+                    os.path.abspath('config/credentials.json'), googleapis.SCOPES)
+                # flow = InstalledAppFlow.from_client_secrets_file(
+                #     resource_path('../config/credentials.json'), SCOPES)
+                creds = flow.run_local_server(port=0)
+            # Save the credentials for the next run
+            with open(os.path.abspath('config/token.json'), 'w') as token:
+                token.write(creds.to_json())   
+
         try:
-            service = build('sheets', 'v4', credentials=googleapis.creds(), static_discovery=False)
+            service = build('sheets', 'v4', credentials=creds, static_discovery=False)
 
             # Call the Sheets API
             sheet = service.spreadsheets()
@@ -66,12 +87,32 @@ class googleapis:
 
     @staticmethod
     def driveapi(dlink,fmaindir):
+        creds = None
+        # The file token.json stores the user's access and refresh tokens, and is
+        # created automatically when the authorization flow completes for the first
+        # time.
+        if os.path.exists(os.path.abspath('config/token.json')):
+            creds = Credentials.from_authorized_user_file(os.path.abspath('config/token.json'), googleapis.SCOPES)
+        # If there are no (valid) credentials available, let the user log in.
+        if not creds or not creds.valid:
+            if creds and creds.expired and creds.refresh_token:
+                creds.refresh(Request())
+            else:
+                flow = InstalledAppFlow.from_client_secrets_file(
+                    os.path.abspath('config/credentials.json'), googleapis.SCOPES)
+                # flow = InstalledAppFlow.from_client_secrets_file(
+                #     resource_path('../config/credentials.json'), SCOPES)
+                creds = flow.run_local_server(port=0)
+            # Save the credentials for the next run
+            with open(os.path.abspath('config/token.json'), 'w') as token:
+                token.write(creds.to_json())
+
         try:
-            service = build('drive', 'v3', credentials=googleapis.creds(), static_discovery=False)
+            service = build('drive', 'v3', credentials=creds, static_discovery=False)
 
             # Call the Drive v3 API
             results = service.files().list(
-                q = '"174Gu0skBr3sVf9pxwcXPg9R6FVlaOPBor_6-NuOWIcC8bcPYsVsQc-vSeszOrpkAQ-KftNTx" in parents and trashed = false', pageSize=1000, fields="nextPageToken, files(id, name)").execute()
+                q = f'"{googleapis.DRIVEFOLDER_ID}" in parents and trashed = false', pageSize=1000, fields="nextPageToken, files(id, name)").execute()
             items = results.get('files', [])
 
             if not items:

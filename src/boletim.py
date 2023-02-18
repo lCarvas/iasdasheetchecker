@@ -31,7 +31,7 @@ class boletim:
         with open(os.path.abspath('config/links.yaml'),'r',encoding='utf-8') as f:
             links = yaml.safe_load(f)
 
-        with requests.get(links.get(datetools.todaystr)) as req:
+        with requests.get(links.get(datetools.satcalc(datetools.today,datetools.weekday))) as req:
             with open('boletim.mp4','wb') as f:
                 for chunk in req.iter_content(chunk_size=8192):
                     f.write(chunk)

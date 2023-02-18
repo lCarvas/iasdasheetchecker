@@ -1,14 +1,16 @@
 from pathlib import Path
 import os
 from funcs import *
+from googleapi import *
+from datetools import *
+from files import *
 
-# Main Working Directory
-maindir = os.path.join(Path.home(), f'Desktop\\AutoMM\\{satcalc(today,weekday)}\\')
 
 
 def main():
-
     # ----- start of file creation -----
+        # Main Working Directory
+        maindir = os.path.join(Path.home(), f'Desktop\\AutoMM\\{datetools.satcalc(datetools.today,datetools.weekday)}\\')
 
         os.makedirs(os.path.dirname(maindir), exist_ok=True)
 
@@ -32,32 +34,36 @@ def main():
         batfile.write('@echo off\n')
 
         # Start the txt file
-        txtfile = open(maindir + f'{satcalc(today,weekday)}.txt','w')
-        txtfile.write(f'Programa {satcalc(today,weekday)}\n\n')
+        txtfile = open(maindir + f'{datetools.satcalc(datetools.today,datetools.weekday)}.txt','w')
+        txtfile.write(f'Programa {datetools.satcalc(datetools.today,datetools.weekday)}\n\n')
+        
+        Files = files(maindir,batfile,txtfile,dic)
 
-    #TODO Adicionar auto video carta missionaria at some point
-        for row in reversed(values):
-            if today <= datetime.datetime.strptime(row[0], '%d/%m/%Y'):
-                if row[1] == 'Momento Especial':
-                    if dic['Momento Especial'][1] == 0:
-                        batfile.write(f'start https://www.google.com/search?q=ME\n')
-                        txtfile.write(f'{row[1]}')
-                        dic['Momento Especial'][1] += 1
-                    for time in dic['Momento Especial'][2].keys():
-                        if time == row[10]:
-                            if dic['Momento Especial'][2][row[10]] == 0:
-                                if row[11] != 'Não':
-                                    batfile.write(f'\nstart {row[11]}\n')
-                                txtfile.write(f'\n{row[10]}\n{number_get(row[11])}\n\n')
-                                if row[4] != '':
-                                    txtfile.write(f'{necfiles(row[4],maindir,creds)}\n\n')
-                                else:
-                                    txtfile.write('\n')
-                                dic['Momento Especial'][2][row[10]] += 1
-                            else:
-                                pass
-                else:
-                    file_writing(batfile,txtfile,row,dic,maindir,creds)
+        for row in reversed(googleapis.sheetsapi()):
+            if datetools.today <= datetime.datetime.strptime(row[0], '%d/%m/%Y'):
+                Files.row[1](row)
+                # if row[1] == 'Momento Especial':
+                #     pass
+                #     # if dic['Momento Especial'][1] == 0:
+                #     #     batfile.write(f'start https://www.google.com/search?q=ME\n')
+                #     #     txtfile.write(f'{row[1]}')
+                #     #     dic['Momento Especial'][1] += 1
+                #     # for time in dic['Momento Especial'][2].keys():
+                #     #     if time == row[10]:
+                #     #         if dic['Momento Especial'][2][row[10]] == 0:
+                #     #             if row[11] != 'Não':
+                #     #                 batfile.write(f'\nstart {row[11]}\n')
+                #     #             txtfile.write(f'\n{row[10]}\n{number_get(row[11])}\n\n')
+                #     #             if row[4] != '':
+                #     #                 txtfile.write(f'{necfiles(row[4],maindir,creds)}\n\n')
+                #     #             else:
+                #     #                 txtfile.write('\n')
+                #     #             dic['Momento Especial'][2][row[10]] += 1
+                #     #         else:
+                #     #             pass
+                # else:
+                #     if row[1] == 'Culto':
+                #          Files.Culto(row)
 
 
 if __name__ == '__main__':
