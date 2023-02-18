@@ -41,7 +41,7 @@ def main():
 
         for row in reversed(googleapis.sheetsapi()):
             if datetools.today <= datetime.datetime.strptime(row[0], '%d/%m/%Y'):
-                Files.row[1](row)
+                getattr(Files,row[1])(row)
                 # if row[1] == 'Momento Especial':
                 #     pass
                 #     # if dic['Momento Especial'][1] == 0:
