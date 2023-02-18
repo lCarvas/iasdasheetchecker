@@ -4,8 +4,11 @@ from google.oauth2.credentials import Credentials
 from google_auth_oauthlib.flow import InstalledAppFlow
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
+from googleapiclient.http import MediaIoBaseDownload
+
 from config import Config
 import os
+import io
 
 class googleapis:
 
@@ -18,10 +21,7 @@ class googleapis:
     SPREADSHEET_ID = Config.getkeys()['spreadsheetid']
 
     @staticmethod
-    def sheetsapi():
-        """Shows basic usage of the Sheets API.
-        Prints values from a sample spreadsheet.
-        """
+    def creds():
         creds = None
         # The file token.json stores the user's access and refresh tokens, and is
         # created automatically when the authorization flow completes for the first
@@ -42,8 +42,12 @@ class googleapis:
             with open(os.path.abspath('config/token.json'), 'w') as token:
                 token.write(creds.to_json())
 
+            return creds
+
+    @staticmethod
+    def sheetsapi():        
         try:
-            service = build('sheets', 'v4', credentials=creds, static_discovery=False)
+            service = build('sheets', 'v4', credentials=googleapis.creds(), static_discovery=False)
 
             # Call the Sheets API
             sheet = service.spreadsheets()
@@ -59,3 +63,34 @@ class googleapis:
         
         except HttpError as err:
             print(err)
+
+    @staticmethod
+    def driveapi(dlink,fmaindir):
+        try:
+            service = build('drive', 'v3', credentials=googleapis.creds(), static_discovery=False)
+
+            # Call the Drive v3 API
+            results = service.files().list(
+                q = '"174Gu0skBr3sVf9pxwcXPg9R6FVlaOPBor_6-NuOWIcC8bcPYsVsQc-vSeszOrpkAQ-KftNTx" in parents and trashed = false', pageSize=1000, fields="nextPageToken, files(id, name)").execute()
+            items = results.get('files', [])
+
+            if not items:
+                print('No files found.')
+                return
+            
+            for item in items:
+                if dlink[33:] == item['id']:
+                    request = service.files().get_media(fileId=item['id'])
+
+                    file = io.FileIO(fmaindir + "\\" + item['name'],'w')
+                    downloader = MediaIoBaseDownload(file, request)
+                    done = False
+                    print(f'Downloading {item["name"]} 0%.')
+                    while done is False:
+                        status, done = downloader.next_chunk()
+                        print(f'Downloading {item["name"]} {int(status.progress() * 100)}%.')         
+                    return item['name']
+
+        except HttpError as error:
+            # TODO(developer) - Handle errors from drive API.
+            print(f'An error occurred: {error}')

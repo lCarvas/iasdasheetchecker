@@ -25,7 +25,6 @@ class VersionManager:
                     for chunk in req.iter_content(chunk_size=8192):
                         if chunk:
                             f.write(chunk)
-                return 'MMACP.exe'
         except Exception as e:
             print(e)
             return None
