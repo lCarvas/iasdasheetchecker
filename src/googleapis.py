@@ -5,11 +5,10 @@ from google_auth_oauthlib.flow import InstalledAppFlow
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
 from googleapiclient.http import MediaIoBaseDownload
-from tqdm.auto import tqdm
 
 from config import Config
 import os
-import io
+import gdown
 
 class googleapis:
 
@@ -89,54 +88,5 @@ class googleapis:
 
     @staticmethod
     def driveapi(dlink,fmaindir):
-        creds = None
-        # The file token.json stores the user's access and refresh tokens, and is
-        # created automatically when the authorization flow completes for the first
-        # time.
-        if os.path.exists(os.path.abspath('config/token.json')):
-            creds = Credentials.from_authorized_user_file(os.path.abspath('config/token.json'), googleapis.SCOPES)
-        # If there are no (valid) credentials available, let the user log in.
-        if not creds or not creds.valid:
-            if creds and creds.expired and creds.refresh_token:
-                creds.refresh(Request())
-            else:
-                flow = InstalledAppFlow.from_client_secrets_file(
-                    os.path.abspath('config/credentials.json'), googleapis.SCOPES)
-                # flow = InstalledAppFlow.from_client_secrets_file(
-                #     resource_path('../config/credentials.json'), SCOPES)
-                creds = flow.run_local_server(port=0)
-            # Save the credentials for the next run
-            with open(os.path.abspath('config/token.json'), 'w') as token:
-                token.write(creds.to_json())
+        gdown.download(id=dlink[33:],use_cookies=False,output=(os.path.abspath(fmaindir) + '\\'))
 
-        try:
-            service = build('drive', 'v3', credentials=creds, static_discovery=False)
-
-            # Call the Drive v3 API
-            results = service.files().list(
-                q = f'"{googleapis.DRIVEFOLDER_ID}" in parents and trashed = false', pageSize=1000, fields="nextPageToken, files(id, name, size)").execute()
-            items = results.get('files', [])
-
-            if not items:
-                print('No files found.')
-                return
-            
-            for item in items:
-                if dlink[33:] == item['id']:
-                    request = service.files().get_media(fileId=item['id'])
-                    size = int(item["size"])
-                    file = io.FileIO(fmaindir + "\\" + item['name'],'w')
-                    downloader = MediaIoBaseDownload(file, request)
-                    done = False
-                    oldprogress = 0
-
-                    with tqdm(desc=f'{item["name"]}', total=size,unit='iB',unit_scale=True,unit_divisor=1024) as bar:
-                        while done is False:
-                            status, done = downloader.next_chunk()
-                            bar.update(downloader._progress-oldprogress)
-                            oldprogress = downloader._progress
-                return item['name']
-            
-        except HttpError as error:
-            # TODO(developer) - Handle errors from drive API.
-            print(f'An error occurred: {error}')

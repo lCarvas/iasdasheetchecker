@@ -8,10 +8,24 @@ from files import files
 from VersionManager import VersionManager
 
 
+
 CURRENT_VERSION = 1.4
 
 
 def init():
+    maindir = os.path.join(Path.home(), f'Desktop\\MMACP\\')
+    if not os.path.exists(os.path.join(os.path.dirname(maindir), 'config\\config.yaml')):
+        print('Config file not found, creating...')
+        os.makedirs(os.path.join(os.path.dirname(maindir), 'config\\'), exist_ok=True)
+        with open(os.path.join(os.path.dirname(maindir), 'config\\config.yaml'), 'w') as f:
+             f.write('ids:\n\tspreadsheetid:\n\tdrivefolderid:')
+             f.close()
+        print('Config file created, please fill it in and reopen the app.')
+        input('Press Enter to close the app.')
+        sys.exit()
+
+
+
     if not VersionManager.isLatestVersion(CURRENT_VERSION):
         print('[bold red]!!! NEW VERSION AVAILABLE !!!')
         os.startfile(os.path.abspath('updater.exe'))
@@ -19,27 +33,26 @@ def init():
 
 
 
-
 def main():
     # ----- start of file creation -----
         # Main Working Directory
-        maindir = os.path.join(Path.home(), f'Desktop\\AutoMM\\{datetools.satcalc(datetools.today,datetools.weekday)}\\')
+        maindir = os.path.join(Path.home(), f'Desktop\\MMACP\\{datetools.satcalc(datetools.today,datetools.weekday)}\\')
 
         os.makedirs(os.path.dirname(maindir), exist_ok=True)
 
         dic = {
-            'Momentos de Louvor':['MDL',0],
+            'Anúncios':['AN',0],
             'Culto':['C',0],
             'Escola Sabatina':['ES',0],
-            'Anúncios':['AN',0],
-            'Programa da Tarde':['PDT',0],
+            'Momentos de Louvor':['MDL',0],
             'Momento Especial':['ME',{
                 'Durante a Escola Sabatina':0,
                 'Após a Escola Sabatina':0,
                 'Antes do Culto':0,
                 'Durante o Culto':0,
                 'Após o Culto':0
-            }]
+            }],
+            'Programa da Tarde':['PDT',0]
         }
 
         # Start the bat file
@@ -57,5 +70,5 @@ def main():
                 getattr(Files,row[1].replace(' ','_'))(row)
 
 if __name__ == '__main__':
-    main()
+    init()
 input('Finished.')
