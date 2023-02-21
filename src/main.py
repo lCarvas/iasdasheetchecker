@@ -1,9 +1,22 @@
 from pathlib import Path
 import os
-from funcs import *
-from googleapi import *
-from datetools import *
-from files import *
+import datetime
+import sys
+from googleapis import googleapis
+from datetools import datetools
+from files import files
+from VersionManager import VersionManager
+
+
+CURRENT_VERSION = 1.4
+
+
+def init():
+    if not VersionManager.isLatestVersion(CURRENT_VERSION):
+        print('[bold red]!!! NEW VERSION AVAILABLE !!!')
+        os.startfile(os.path.abspath('updater.exe'))
+        sys.exit()
+
 
 
 
@@ -20,7 +33,7 @@ def main():
             'Escola Sabatina':['ES',0],
             'Anúncios':['AN',0],
             'Programa da Tarde':['PDT',0],
-            'Momento Especial':['ME',0,{
+            'Momento Especial':['ME',{
                 'Durante a Escola Sabatina':0,
                 'Após a Escola Sabatina':0,
                 'Antes do Culto':0,
@@ -41,30 +54,7 @@ def main():
 
         for row in reversed(googleapis.sheetsapi()):
             if datetools.today <= datetime.datetime.strptime(row[0], '%d/%m/%Y'):
-                getattr(Files,row[1])(row)
-                # if row[1] == 'Momento Especial':
-                #     pass
-                #     # if dic['Momento Especial'][1] == 0:
-                #     #     batfile.write(f'start https://www.google.com/search?q=ME\n')
-                #     #     txtfile.write(f'{row[1]}')
-                #     #     dic['Momento Especial'][1] += 1
-                #     # for time in dic['Momento Especial'][2].keys():
-                #     #     if time == row[10]:
-                #     #         if dic['Momento Especial'][2][row[10]] == 0:
-                #     #             if row[11] != 'Não':
-                #     #                 batfile.write(f'\nstart {row[11]}\n')
-                #     #             txtfile.write(f'\n{row[10]}\n{number_get(row[11])}\n\n')
-                #     #             if row[4] != '':
-                #     #                 txtfile.write(f'{necfiles(row[4],maindir,creds)}\n\n')
-                #     #             else:
-                #     #                 txtfile.write('\n')
-                #     #             dic['Momento Especial'][2][row[10]] += 1
-                #     #         else:
-                #     #             pass
-                # else:
-                #     if row[1] == 'Culto':
-                #          Files.Culto(row)
-
+                getattr(Files,row[1].replace(' ','_'))(row)
 
 if __name__ == '__main__':
     main()

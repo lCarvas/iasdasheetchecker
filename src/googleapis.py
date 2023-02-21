@@ -5,6 +5,7 @@ from google_auth_oauthlib.flow import InstalledAppFlow
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
 from googleapiclient.http import MediaIoBaseDownload
+from tqdm.auto import tqdm
 
 from config import Config
 import os
@@ -20,6 +21,7 @@ class googleapis:
     SAMPLE_RANGE_NAME = 'Main!A2:L'
     SPREADSHEET_ID = Config.getkeys()['spreadsheetid']
     DRIVEFOLDER_ID = Config.getkeys()['driveid']
+    
 
     @staticmethod
     def creds():
@@ -112,7 +114,7 @@ class googleapis:
 
             # Call the Drive v3 API
             results = service.files().list(
-                q = f'"{googleapis.DRIVEFOLDER_ID}" in parents and trashed = false', pageSize=1000, fields="nextPageToken, files(id, name)").execute()
+                q = f'"{googleapis.DRIVEFOLDER_ID}" in parents and trashed = false', pageSize=1000, fields="nextPageToken, files(id, name, size)").execute()
             items = results.get('files', [])
 
             if not items:
@@ -122,16 +124,19 @@ class googleapis:
             for item in items:
                 if dlink[33:] == item['id']:
                     request = service.files().get_media(fileId=item['id'])
-
+                    size = int(item["size"])
                     file = io.FileIO(fmaindir + "\\" + item['name'],'w')
                     downloader = MediaIoBaseDownload(file, request)
                     done = False
-                    print(f'Downloading {item["name"]} 0%.')
-                    while done is False:
-                        status, done = downloader.next_chunk()
-                        print(f'Downloading {item["name"]} {int(status.progress() * 100)}%.')         
-                    return item['name']
+                    oldprogress = 0
 
+                    with tqdm(desc=f'{item["name"]}', total=size,unit='iB',unit_scale=True,unit_divisor=1024) as bar:
+                        while done is False:
+                            status, done = downloader.next_chunk()
+                            bar.update(downloader._progress-oldprogress)
+                            oldprogress = downloader._progress
+                return item['name']
+            
         except HttpError as error:
             # TODO(developer) - Handle errors from drive API.
             print(f'An error occurred: {error}')

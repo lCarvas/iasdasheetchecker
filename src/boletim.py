@@ -3,6 +3,7 @@ from bs4 import BeautifulSoup
 import yaml
 import os
 from datetools import datetools
+from tqdm.auto import tqdm
 
 class boletim:
 
@@ -24,14 +25,16 @@ class boletim:
     def linksyaml():
         yamllist = dict(zip(datetools.trimsat(), boletim.getlinklist()))
         with open(os.path.abspath('config/links.yaml'),'w') as f:
-            yaml.dump(yamllist,f)
+            yaml.dump(yamllist,f,sort_keys=False)
 
     @staticmethod
     def downloadboletim():
         with open(os.path.abspath('config/links.yaml'),'r',encoding='utf-8') as f:
             links = yaml.safe_load(f)
 
-        with requests.get(links.get(datetools.satcalc(datetools.today,datetools.weekday))) as req:
-            with open('boletim.mp4','wb') as f:
+        with requests.get(links.get(datetools.satcalc(datetools.today,datetools.weekday)),stream=True) as req:
+            total_length = int(req.headers.get('content-length'))
+            with open('Boletim.mp4','wb') as f, tqdm(desc='Boletim.mp4', total=total_length,unit='iB',unit_scale=True,unit_divisor=1024) as bar:
                 for chunk in req.iter_content(chunk_size=8192):
-                    f.write(chunk)
+                    if chunk:
+                        bar.update(f.write(chunk))
