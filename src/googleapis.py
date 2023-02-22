@@ -4,11 +4,10 @@ from google.oauth2.credentials import Credentials
 from google_auth_oauthlib.flow import InstalledAppFlow
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
-from googleapiclient.http import MediaIoBaseDownload
 
-from config import Config
 import os
 import gdown
+import sys
 
 class googleapis:
 
@@ -47,26 +46,33 @@ class googleapis:
             return creds
 
     @staticmethod
-    def sheetsapi():   
+    def sheetsapi():  
+
         creds = None
         # The file token.json stores the user's access and refresh tokens, and is
         # created automatically when the authorization flow completes for the first
         # time.
-        if os.path.exists(os.path.abspath('config/token.json')):
-            creds = Credentials.from_authorized_user_file(os.path.abspath('config/token.json'), googleapis.SCOPES)
-        # If there are no (valid) credentials available, let the user log in.
-        if not creds or not creds.valid:
-            if creds and creds.expired and creds.refresh_token:
-                creds.refresh(Request())
-            else:
-                flow = InstalledAppFlow.from_client_secrets_file(
-                    os.path.abspath('config/credentials.json'), googleapis.SCOPES)
-                # flow = InstalledAppFlow.from_client_secrets_file(
-                #     resource_path('../config/credentials.json'), SCOPES)
-                creds = flow.run_local_server(port=0)
-            # Save the credentials for the next run
-            with open(os.path.abspath('config/token.json'), 'w') as token:
-                token.write(creds.to_json())   
+        try:
+            if os.path.exists(os.path.abspath('config/token.json')):
+                creds = Credentials.from_authorized_user_file(os.path.abspath('config/token.json'), googleapis.SCOPES)
+            # If there are no (valid) credentials available, let the user log in.
+            if not creds or not creds.valid:
+                if creds and creds.expired and creds.refresh_token:
+                    creds.refresh(Request())
+                else:
+                    flow = InstalledAppFlow.from_client_secrets_file(
+                        os.path.abspath('config/credentials.json'), googleapis.SCOPES)
+                    # flow = InstalledAppFlow.from_client_secrets_file(
+                    #     resource_path('../config/credentials.json'), SCOPES)
+                    creds = flow.run_local_server(port=0)
+                # Save the credentials for the next run
+                with open(os.path.abspath('config/token.json'), 'w') as token:
+                    token.write(creds.to_json())   
+        except FileNotFoundError:
+            print('Credentials file not found, have you put it in the config folder?')
+            input('Press Enter to close the app.')
+            sys.exit()
+
 
         try:
             service = build('sheets', 'v4', credentials=creds, static_discovery=False)
@@ -89,4 +95,3 @@ class googleapis:
     @staticmethod
     def driveapi(dlink,fmaindir):
         gdown.download(id=dlink[33:],use_cookies=False,output=(os.path.abspath(fmaindir) + '\\'))
-

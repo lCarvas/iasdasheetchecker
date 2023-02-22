@@ -21,11 +21,12 @@ def init():
     if not os.path.exists('./config/config.yaml'):
         print('Config file not found, creating...')
         with open('./config/config.yaml', 'w') as f:
-             f.write('ids:\n spreadsheetid:\n drivefolderid:')
-             f.close()
-        print('Config file created, please fill it in and reopen the app.')
-        input('Press Enter to close the app.')
-        sys.exit()
+            print('Running first time setup..')
+            sheetid = input('Please input the Spreadsheet id: ')
+            driveid = input('Please input the Drive folder id: ') 
+            f.write(f'ids:\n  spreadsheetid: {sheetid}\n  drivefolderid: {driveid}')
+            f.close()
+        print('Config file created.')
 
     if not os.path.exists('./updater.exe'):
         print('Updater not found, downloading...')
@@ -41,7 +42,6 @@ def init():
         print('Config file not filled in properly, did you correctly put both keys in?')
         input('Press Enter to close the app.')
         sys.exit()
-
 
     if not VersionManager.isLatestVersion(CURRENT_VERSION):
         print('[bold red]!!! NEW VERSION AVAILABLE !!!')
