@@ -27,6 +27,8 @@ class boletim:
         with open(os.path.abspath('config/links.yaml'),'w') as f:
             yaml.dump(yamllist,f,sort_keys=False)
 
+        f.close()
+
     @staticmethod
     def downloadboletim():
         with open(os.path.abspath('config/links.yaml'),'r',encoding='utf-8') as f:
@@ -38,3 +40,18 @@ class boletim:
                 for chunk in req.iter_content(chunk_size=8192):
                     if chunk:
                         bar.update(f.write(chunk))
+
+        f.close()
+
+    @staticmethod
+    def checkfinaldate():
+        try:
+            with open(os.path.abspath('config/links.yaml'),'r',encoding='utf-8') as f:
+                links = yaml.safe_load(f)
+                finaldate = list(links.keys())[0]
+            
+            f.close()
+            return finaldate
+        
+        except FileNotFoundError:
+            pass

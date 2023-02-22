@@ -18,8 +18,8 @@ class googleapis:
 ]
     
     SAMPLE_RANGE_NAME = 'Main!A2:L'
-    SPREADSHEET_ID = Config.getkeys()['spreadsheetid']
-    DRIVEFOLDER_ID = Config.getkeys()['driveid']
+    SPREADSHEET_ID = None
+    DRIVEFOLDER_ID = None
     
 
     @staticmethod
