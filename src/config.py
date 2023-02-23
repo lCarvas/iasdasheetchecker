@@ -1,5 +1,4 @@
 import yaml
-from yaml.parser import ParserError
 import os
 
 class Config:
@@ -9,6 +8,5 @@ class Config:
             config = yaml.safe_load(f)
             apikeys = {
                 'spreadsheetid': config.get("ids")['spreadsheetid'],
-                'driveid': config.get("ids")['drivefolderid']
             }
         return apikeys

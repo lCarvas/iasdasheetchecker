@@ -23,8 +23,7 @@ def init():
         with open('./config/config.yaml', 'w') as f:
             print('Running first time setup..')
             sheetid = input('Please input the Spreadsheet id: ')
-            driveid = input('Please input the Drive folder id: ') 
-            f.write(f'ids:\n  spreadsheetid: {sheetid}\n  drivefolderid: {driveid}')
+            f.write(f'ids:\n  spreadsheetid: {sheetid}')
             f.close()
         print('Config file created.')
         print('Please place the credentials file inside the config folder.')
@@ -85,7 +84,6 @@ def main():
     Files = files(maindir,batfile,txtfile,dic)
 
     googleapis.SPREADSHEET_ID = Config.getkeys()['spreadsheetid']
-    googleapis.DRIVEFOLDER_ID = Config.getkeys()['driveid']
 
 
     for row in reversed(googleapis.sheetsapi()):
