@@ -27,6 +27,8 @@ def init():
             f.write(f'ids:\n  spreadsheetid: {sheetid}\n  drivefolderid: {driveid}')
             f.close()
         print('Config file created.')
+        print('Please place the credentials file inside the config folder.')
+        input('Press Enter after you put the credentials file inside the config folder.')
 
     if not os.path.exists('./updater.exe'):
         print('Updater not found, downloading...')
@@ -65,7 +67,7 @@ def main():
         'Momento Especial':['ME',{
             'Durante a Escola Sabatina':0,
             'Após a Escola Sabatina':0,
-            'Antes do Culto':0,
+            'Antes do Culto (Após os Anúncios)':0,
             'Durante o Culto':0,
             'Após o Culto':0
         }],

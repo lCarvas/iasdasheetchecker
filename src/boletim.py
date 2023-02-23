@@ -40,7 +40,8 @@ class boletim:
                 for chunk in req.iter_content(chunk_size=8192):
                     if chunk:
                         bar.update(f.write(chunk))
-
+        
+        req.close()
         f.close()
 
     @staticmethod

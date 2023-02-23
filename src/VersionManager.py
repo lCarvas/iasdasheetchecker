@@ -27,6 +27,10 @@ class VersionManager:
                     for chunk in req.iter_content(chunk_size=8192):
                         if chunk:
                             bar.update(f.write(chunk))
+
+                f.close()
+                req.close()
+
         except Exception as e:
             print(e)
             return None
@@ -40,6 +44,10 @@ class VersionManager:
                     for chunk in req.iter_content(chunk_size=8192):
                         if chunk:
                             bar.update(f.write(chunk))
+                
+                f.close()
+                req.close()
+
         except Exception as e:
             print(e)
             return None

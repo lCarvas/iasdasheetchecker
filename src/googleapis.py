@@ -11,10 +11,7 @@ import sys
 
 class googleapis:
 
-    SCOPES = [
-    'https://www.googleapis.com/auth/spreadsheets.readonly', 
-    'https://www.googleapis.com/auth/drive.readonly'
-]
+    SCOPES = ['https://www.googleapis.com/auth/spreadsheets.readonly']
     
     SAMPLE_RANGE_NAME = 'Main!A2:L'
     SPREADSHEET_ID = None
