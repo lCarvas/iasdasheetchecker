@@ -1,14 +1,10 @@
-# IASDA Auto MM
-Simple program to aid in the work of the Multimedia team of IASDA.
+# README CONTENTS
+1. [Funções](#funções)
+2. [Configuração](#Configuração)
+	- Windows(TBD)
 
-# Features
-- Automatically download and extract name of Necessary Files 
-- ## Text FIle
-	 - Show Date of Programme
-	 - Organise file by form category
-	 - Get Hymn Numbers from Spreadsheet and add them to a txt file
-	 - Show ES programme in text file
-	 
- - ## Bat File
-	 - Automatically open Hymn links and separate them by form category
 
+## Funções
+- Recolher as informações necessárias de uma página de Google Sheets associada a um Google Forms
+- Download automático de ficheiros enviados pelo formulário e dos vídeos do Boletim Missionário
+- Ficheiro .bat para abrir automáticamente todos os hinos enviados
