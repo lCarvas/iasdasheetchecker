@@ -66,4 +66,4 @@ class googleapis:
 
     @staticmethod
     def driveapi(dlink,fmaindir):
-        gdown.download(id=dlink[33:],use_cookies=False,output=(os.path.abspath(fmaindir) + '\\'))
+        gdown.download(url=dlink,fuzzy=True,use_cookies=False,output=(os.path.abspath(fmaindir) + '\\'))
