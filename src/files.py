@@ -1,8 +1,49 @@
 from googleapis import googleapis
 from dic import hymndic
+from boletim import boletim
 
 
 class files:
+    @staticmethod
+    def link_ver(furl):
+        import validators
+
+        if validators.url(furl):
+            return True
+        else:
+            return False
+        
+
+    # got from https://stackoverflow.com/a/52664178
+    @staticmethod
+    def title_get(furl):
+        import urllib.request
+        import json
+        import urllib
+        from cleantext import clean
+
+        params = {"format": "json", "url": "%s" % furl}
+        url = "https://www.youtube.com/oembed"
+        query_string = urllib.parse.urlencode(params)
+        url = url + "?" + query_string
+
+        if files.link_ver(furl):
+            with urllib.request.urlopen(url) as response:
+                response_text = response.read()
+                data = json.loads(response_text.decode())
+                title = clean(data['title'], no_emoji=True)
+        else:
+            title = furl
+        
+        # got from https://stackoverflow.com/a/4510805
+        for i, c in enumerate(title):
+            if c.isdigit():
+                title = title[i:i+3]
+                break
+
+        return title
+    
+#------------------------------------------------------
 
     def __init__(self,maindir,batfile,txtfile,dic):
         self.maindir = maindir
@@ -35,46 +76,6 @@ class files:
             pass
 
 #------------------------------------------------------
-
-    @staticmethod
-    def link_ver(furl):
-        import validators
-
-        if validators.url(furl):
-            return True
-        else:
-            return False
-        
-
-    # got from https://stackoverflow.com/a/52664178
-    @staticmethod
-    def title_get(furl):
-        import urllib.request
-        import json
-        import urllib
-        from cleantext import clean
-
-
-        params = {"format": "json", "url": "%s" % furl}
-        url = "https://www.youtube.com/oembed"
-        query_string = urllib.parse.urlencode(params)
-        url = url + "?" + query_string
-
-        if files.link_ver(furl):
-            with urllib.request.urlopen(url) as response:
-                response_text = response.read()
-                data = json.loads(response_text.decode())
-                title = clean(data['title'], no_emoji=True)
-        else:
-            title = furl
-        
-        # got from https://stackoverflow.com/a/4510805
-        for i, c in enumerate(title):
-            if c.isdigit():
-                title = title[i:i+3]
-                break
-
-        return title
 
     def Anúncios(self,frow):
         if self.dic[f'{frow[1]}'][1] == 0:
@@ -110,6 +111,10 @@ class files:
             self.starting(frow)
             self.hinos(frow)
             self.ficheiros(frow)
+            
+            # Boletim Missionário
+            if frow[6] == 'Vídeo':
+                boletim.downloadboletim()
             print()
     
     def Momentos_de_Louvor(self,frow):
