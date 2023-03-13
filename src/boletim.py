@@ -30,13 +30,13 @@ class boletim:
         f.close()
 
     @staticmethod
-    def downloadboletim():
+    def downloadboletim(fmaindir):
         with open(os.path.abspath('config/links.yaml'),'r',encoding='utf-8') as f:
             links = yaml.safe_load(f)
 
         with requests.get(links.get(datetools.satcalc(datetools.today,datetools.weekday)),stream=True) as req:
             total_length = int(req.headers.get('content-length'))
-            with open('Boletim.mp4','wb') as f, tqdm(desc='Boletim.mp4', total=total_length,unit='iB',unit_scale=True,unit_divisor=1024) as bar:
+            with open(f'{fmaindir}/Boletim.mp4','wb') as f, tqdm(desc='Boletim.mp4', total=total_length,unit='iB',unit_scale=True,unit_divisor=1024) as bar:
                 for chunk in req.iter_content(chunk_size=8192):
                     if chunk:
                         bar.update(f.write(chunk))
