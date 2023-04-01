@@ -10,15 +10,15 @@ class boletim:
     @staticmethod
     def getlinklist():
         linklist = []
-        r = requests.get('https://recursos.adventistas.org.pt/escolasabatina/videos/boletim-missionario-{}-o-trimestre-de-2023/'.format(datetools.trim)).content
+        r = requests.get('https://recursos.adventistas.org.pt/escolasabatina/videos/boletim-missionario-{}-o-trimestre-de-{}/'.format(datetools.trim,datetools.today.year)).content
         soup = BeautifulSoup(r, "html.parser")
         mc = soup.find('div', attrs={'class':'mb-5'})
         for link in mc.find_all('a'):
             linklist.append(link.get('href'))
 
         linklist.pop()
-        linklist.reverse()
-        
+        linklist.pop(0)
+
         return linklist
     
     @staticmethod
@@ -34,7 +34,7 @@ class boletim:
         with open(os.path.abspath('config/links.yaml'),'r',encoding='utf-8') as f:
             links = yaml.safe_load(f)
 
-        with requests.get(links.get(datetools.satcalc(datetools.today,datetools.weekday)),stream=True) as req:
+        with requests.get(links.get(str(datetools.satcalc(datetools.today))),stream=True) as req:
             total_length = int(req.headers.get('content-length'))
             with open(f'{fmaindir}/Boletim.mp4','wb') as f, tqdm(desc='Boletim.mp4', total=total_length,unit='iB',unit_scale=True,unit_divisor=1024) as bar:
                 for chunk in req.iter_content(chunk_size=8192):
@@ -49,8 +49,7 @@ class boletim:
         try:
             with open(os.path.abspath('config/links.yaml'),'r',encoding='utf-8') as f:
                 links = yaml.safe_load(f)
-                finaldate = list(links.keys())[0]
-            
+                finaldate = list(links.keys())[-1]
             f.close()
             return finaldate
         

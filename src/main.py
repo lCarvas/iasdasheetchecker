@@ -11,7 +11,7 @@ from config import Config
 from boletim import boletim
 
 
-CURRENT_VERSION = 1.41
+CURRENT_VERSION = 1.42
 
 
 def init():
@@ -34,7 +34,7 @@ def init():
         VersionManager.download_updater()
         print('Updater downloaded.')
 
-    if not os.path.exists('./config/links.yaml') or datetools.today > datetime.datetime.strptime(boletim.checkfinaldate(),'%d-%m-%Y'):
+    if not os.path.exists('./config/links.yaml') or datetools.today > datetime.datetime.strptime(boletim.checkfinaldate(),'%Y-%m-%d').date():
         print('Links Boletim Missionário not found, creating...')
         boletim.linksyaml()
         print('Links file created.')
@@ -55,7 +55,7 @@ def init():
 def main():
     # ----- start of file creation -----
     # Main Working Directory
-    maindir = f'./Sábados/{datetools.satcalc(datetools.today,datetools.weekday)}/'
+    maindir = f'./Sábados/{datetools.satcalc(datetools.today)}/'
     os.makedirs(os.path.dirname(maindir), exist_ok=True)
 
     dic = {
@@ -78,8 +78,8 @@ def main():
     batfile.write('@echo off\n')
 
     # Start the txt file
-    txtfile = open(maindir + f'{datetools.satcalc(datetools.today,datetools.weekday)}.txt','w')
-    txtfile.write(f'Programa {datetools.satcalc(datetools.today,datetools.weekday)}\n\n')
+    txtfile = open(maindir + f'{datetools.satcalc(datetools.today)}.txt','w')
+    txtfile.write(f'Programa {datetools.satcalc(datetools.today)}\n\n')
     
     Files = files(maindir,batfile,txtfile,dic)
 
@@ -87,7 +87,7 @@ def main():
 
 
     for row in reversed(googleapis.sheetsapi()):
-        if datetools.today <= datetime.datetime.strptime(row[0], '%d/%m/%Y'):
+        if datetools.today <= datetime.datetime.strptime(row[0], '%d/%m/%Y').date():
             getattr(Files,row[1].replace(' ','_'))(row)
     
     txtfile.close()

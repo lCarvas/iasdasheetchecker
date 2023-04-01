@@ -1,17 +1,17 @@
 import datetime
 
 class datetools:
-    today = datetime.datetime.strptime(datetime.datetime.now().strftime('%d-%m-%Y'),'%d-%m-%Y')
+    today = datetime.date.today()
     todaystr = datetime.datetime.strftime(today,'%d-%m-%Y')
     weekday = datetime.datetime.weekday(today)
     trim = (today.month - 1)//3 + 1
 
     @staticmethod
-    def satcalc(ftoday,fweekday):
-        if fweekday == 6:
-            saturday = datetime.datetime.strftime(ftoday + datetime.timedelta(days=12-datetime.datetime.weekday(ftoday)), '%d-%m-%Y')  
+    def satcalc(ftoday):
+        if datetools.weekday == 6:
+            saturday = ftoday + datetime.timedelta(days=12-datetools.weekday)
         else:
-            saturday = datetime.datetime.strftime(ftoday + datetime.timedelta(days=5-datetime.datetime.weekday(ftoday)), '%d-%m-%Y')
+            saturday = ftoday + datetime.timedelta(days=5-datetools.weekday)
         
         return saturday
 
@@ -19,9 +19,10 @@ class datetools:
     def trimsat():
         daylst = []
         i = datetools.today
-        while (int(str(datetools.satcalc(i,datetools.weekday))[3:5]) - 1)//3 + 1 == (int(datetools.todaystr[3:5]) - 1)//3 + 1:
-            daylst.append(datetools.satcalc(i,datetools.weekday))
+        while(datetools.satcalc(i - datetime.timedelta(days=7)).month - 1)//3 + 1 == (datetools.today.month - 1)//3 + 1:
+            i = i + datetime.timedelta(days=-7)
+        while(datetools.satcalc(i).month - 1)//3 + 1 == (datetools.today.month - 1)//3 + 1:
+            daylst.append(str(datetools.satcalc(i)))
             i = i + datetime.timedelta(days=7)
-        daylst.reverse()
         
         return daylst
