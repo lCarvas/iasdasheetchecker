@@ -10,7 +10,7 @@ class boletim:
     @staticmethod
     def getlinklist():
         linklist = []
-        r = requests.get('https://recursos.adventistas.org.pt/escolasabatina/videos/boletim-missionario-1-o-trimestre-de-2023/').content
+        r = requests.get('https://recursos.adventistas.org.pt/escolasabatina/videos/boletim-missionario-{}-o-trimestre-de-2023/'.format(datetools.trim)).content
         soup = BeautifulSoup(r, "html.parser")
         mc = soup.find('div', attrs={'class':'mb-5'})
         for link in mc.find_all('a'):

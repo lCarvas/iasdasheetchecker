@@ -4,6 +4,7 @@ class datetools:
     today = datetime.datetime.strptime(datetime.datetime.now().strftime('%d-%m-%Y'),'%d-%m-%Y')
     todaystr = datetime.datetime.strftime(today,'%d-%m-%Y')
     weekday = datetime.datetime.weekday(today)
+    trim = (today.month - 1)//3 + 1
 
     @staticmethod
     def satcalc(ftoday,fweekday):
