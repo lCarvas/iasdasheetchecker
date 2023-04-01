@@ -11,7 +11,7 @@ from config import Config
 from boletim import boletim
 
 
-CURRENT_VERSION = 1.4
+CURRENT_VERSION = 1.41
 
 
 def init():
