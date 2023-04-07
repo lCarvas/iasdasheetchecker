@@ -34,7 +34,7 @@ def init():
         VersionManager.download_updater()
         print('Updater downloaded.')
 
-    if not os.path.exists('./config/links.yaml') or datetools.today > datetime.datetime.strptime(boletim.checkfinaldate(),'%Y-%m-%d').date():
+    if not os.path.exists('./config/links.yaml') or datetools.satcalc(datetools.today) > datetime.datetime.strptime(boletim.checkfinaldate(),'%Y-%m-%d').date():
         print('Links Boletim Missionário not found, creating...')
         boletim.linksyaml()
         print('Links file created.')
