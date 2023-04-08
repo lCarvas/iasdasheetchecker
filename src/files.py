@@ -114,7 +114,7 @@ class files:
             
             # Boletim Missionário
             if frow[6] == 'Vídeo':
-                boletim.downloadboletim()
+                boletim.downloadboletim(self.maindir)
             print()
     
     def Momentos_de_Louvor(self,frow):
