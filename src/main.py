@@ -11,7 +11,7 @@ from config import Config
 from boletim import boletim
 
 
-CURRENT_VERSION = 1.42
+CURRENT_VERSION = 1.43
 
 
 def init():
@@ -84,7 +84,6 @@ def main():
     Files = files(maindir,batfile,txtfile,dic)
 
     googleapis.SPREADSHEET_ID = Config.getkeys()['spreadsheetid']
-
 
     for row in reversed(googleapis.sheetsapi()):
         if datetools.today <= datetime.datetime.strptime(row[0], '%d/%m/%Y').date():
