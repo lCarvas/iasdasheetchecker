@@ -16,8 +16,9 @@ class boletim:
         for link in mc.find_all('a'):
             linklist.append(link.get('href'))
 
-        linklist.pop()
-        linklist.pop(0)
+        if ".pdf" in linklist[0]:
+            linklist.pop(0)
+        linklist = linklist[1::2]
 
         return linklist
     
