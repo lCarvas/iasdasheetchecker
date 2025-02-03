@@ -11,7 +11,7 @@ from config import Config
 from boletim import boletim
 
 
-CURRENT_VERSION = 1.43
+CURRENT_VERSION = 1.45
 
 
 def init():
@@ -23,7 +23,9 @@ def init():
         with open('./config/config.yaml', 'w') as f:
             print('Running first time setup..')
             sheetid = input('Please input the Spreadsheet id: ')
-            f.write(f'ids:\n  spreadsheetid: {sheetid}')
+            while (youtubeUsage := input('Do you want to use YouTube? (Y/N): ').upper()) not in ["Y", "N"]:
+                pass
+            f.write(f'ids:\n  spreadsheetid: {sheetid}\nsettings:\n  youtube: {True if youtubeUsage == "Y" else False}')
             f.close()
         print('Config file created.')
         print('Please place the credentials file inside the config folder.')
@@ -39,8 +41,8 @@ def init():
         boletim.linksyaml()
         print('Links file created.')
 
-    if None in Config.getkeys().values():
-        print('Config file not filled in properly, did you correctly put both keys in?')
+    if None in Config.getkeys('sheetid').values():
+        print('Config file not filled in properly, did you put the key in correctly?')
         input('Press Enter to close the app.')
         sys.exit()
 
@@ -54,10 +56,6 @@ def init():
 
 def main():
     # ----- start of file creation -----
-    # Main Working Directory
-    maindir = f'./Sábados/{datetools.satcalc(datetools.today)}/'
-    os.makedirs(os.path.dirname(maindir), exist_ok=True)
-
     dic = {
         'Anúncios':['AN',0],
         'Culto':['C',0],
@@ -73,24 +71,30 @@ def main():
         'Programa da Tarde':['PDT',0]
     }
 
-    # Start the bat file
-    batfile = open(maindir + 'Open Me.bat','w')
-    batfile.write('@echo off\n')
+    googleapis.SPREADSHEET_ID = Config.getkeys('sheetid')['spreadsheetid']
 
-    # Start the txt file
-    txtfile = open(maindir + f'{datetools.satcalc(datetools.today)}.txt','w')
-    txtfile.write(f'Programa {datetools.satcalc(datetools.today)}\n\n')
-    
-    Files = files(maindir,batfile,txtfile,dic)
+    if datetools.today <= datetime.datetime.strptime(googleapis.sheetsapi()[-1][0], '%d/%m/%Y').date():
+        # Main Working Directory
+        maindir = f'./Sábados/{datetools.satcalc(datetools.today)}/'
+        os.makedirs(os.path.dirname(maindir), exist_ok=True)
 
-    googleapis.SPREADSHEET_ID = Config.getkeys()['spreadsheetid']
+        # Start the bat file
+        if Config.getkeys('youtube') == "Y":
+            batfile = open(maindir + 'Open Me.bat','w')
+            batfile.write('@echo off\n')
 
-    for row in reversed(googleapis.sheetsapi()):
-        if datetools.today <= datetime.datetime.strptime(row[0], '%d/%m/%Y').date():
-            getattr(Files,row[1].replace(' ','_'))(row)
-    
-    txtfile.close()
-    batfile.close()
+        # Start the txt file
+        txtfile = open(maindir + f'{datetools.satcalc(datetools.today)}.txt','w')
+        txtfile.write(f'Programa {datetools.satcalc(datetools.today)}\n\n')
+
+        Files = files(maindir,batfile,txtfile,dic)
+
+        for row in reversed(googleapis.sheetsapi()):
+            if datetools.today <= datetime.datetime.strptime(row[0], '%d/%m/%Y').date():
+                getattr(Files,row[1].replace(' ','_'))(row)
+        
+        txtfile.close()
+        batfile.close()
 
 if __name__ == '__main__':
     os.system("title " + "MMACP")
