@@ -25,7 +25,7 @@ def init():
             sheetid = input('Please input the Spreadsheet id: ')
             while (youtubeUsage := input('Do you want to use YouTube? (Y/N): ').upper()) not in ["Y", "N"]:
                 pass
-            f.write(f'ids:\n  spreadsheetid: {sheetid}\nsettings:\n  youtube: {True if youtubeUsage == "Y" else False}')
+            f.write(f'ids:\n  spreadsheetid: {sheetid}\nsettings:\n  youtube: {True if youtubeUsage.upper() == "Y" else False}')
             f.close()
         print('Config file created.')
         print('Please place the credentials file inside the config folder.')
@@ -79,7 +79,7 @@ def main():
         os.makedirs(os.path.dirname(maindir), exist_ok=True)
 
         # Start the bat file
-        if Config.getkeys('youtube') == "Y":
+        if Config.getkeys('youtube'):
             batfile = open(maindir + 'Open Me.bat','w')
             batfile.write('@echo off\n')
 
