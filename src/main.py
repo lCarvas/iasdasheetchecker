@@ -92,7 +92,7 @@ def main():
         for row in reversed(googleapis.sheetsapi()):
             if datetools.today <= datetime.datetime.strptime(row[0], '%d/%m/%Y').date():
                 getattr(Files,row[1].replace(' ','_'))(row)
-        
+
         txtfile.close()
         batfile.close()
 

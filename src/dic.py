@@ -599,5 +599,5 @@ hymndic = {
     "597": "https://www.youtube.com/watch?v=HNp73M6vd5o",
     "598": "https://www.youtube.com/watch?v=jsAz9HOKXjU",
     "599": "https://www.youtube.com/watch?v=hbDJN08OQ6I",
-    "600": "https://www.youtube.com/watch?v=hER6dGJKpqY"
+    "600": "https://www.youtube.com/watch?v=hER6dGJKpqY",
 }

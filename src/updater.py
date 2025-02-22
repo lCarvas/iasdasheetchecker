@@ -4,8 +4,8 @@ from pathlib import Path
 
 os.system("title " + "Updater")
 
-print('Downloading...')
+print("Downloading...")
 
 VersionManager.download_file()
 
-os.startfile(Path('./MMACP.exe'))
+os.startfile(Path("./MMACP.exe"))
