@@ -1,14 +1,13 @@
 from pathlib import Path
-import os
-import datetime
-import time
-import sys
-from googleapis import googleapis
-from datetools import datetools
-from files import files
+from os import system
+from datetime import datetime
+from googleapis import GoogleAPIs
+from datetools import DateTools
+from files import Files
 from VersionManager import VersionManager
 from config import Config
-from boletim import boletim
+from boletim import Boletim
+from typing import TextIO
 
 
 CURRENT_VERSION = 1.45
@@ -18,86 +17,73 @@ def init():
     Path("./config/").mkdir(parents=True, exist_ok=True)
     Path("./Sábados/").mkdir(parents=True, exist_ok=True)
 
-    if not os.path.exists('./config/config.yaml'):
-        print('Config file not found, creating...')
-        with open('./config/config.yaml', 'w') as f:
-            print('Running first time setup..')
-            sheetid = input('Please input the Spreadsheet id: ')
-            while (youtubeUsage := input('Do you want to use YouTube? (Y/N): ').upper()) not in ["Y", "N"]:
-                pass
-            f.write(f'ids:\n  spreadsheetid: {sheetid}\nsettings:\n  youtube: {True if youtubeUsage.upper() == "Y" else False}')
-            f.close()
-        print('Config file created.')
-        print('Please place the credentials file inside the config folder.')
-        input('Press Enter after you put the credentials file inside the config folder.')
+    Config.firstTimeSetup()
+    VersionManager.verifyUpdater()
+    Boletim.verifyLinks()
+    VersionManager.getUpdate(CURRENT_VERSION)
 
-    if not os.path.exists('./updater.exe'):
-        print('Updater not found, downloading...')
-        VersionManager.download_updater()
-        print('Updater downloaded.')
-
-    if not os.path.exists('./config/links.yaml') or datetools.satcalc(datetools.today) > datetime.datetime.strptime(boletim.checkfinaldate(),'%Y-%m-%d').date():
-        print('Links Boletim Missionário not found, creating...')
-        boletim.linksyaml()
-        print('Links file created.')
-
-    if None in Config.getkeys('sheetid').values():
-        print('Config file not filled in properly, did you put the key in correctly?')
-        input('Press Enter to close the app.')
-        sys.exit()
-
-    if not VersionManager.isLatestVersion(CURRENT_VERSION):
-        print('[bold red]!!! NEW VERSION AVAILABLE !!!')
-        print('Downloading...')
-        time.sleep(1)
-        os.startfile(os.path.abspath('updater.exe'))
-        sys.exit()
+    # if None in Config.getkeys("sheetid").values():
+    #     print("Config file not filled in properly, did you put the key in correctly?")
+    #     input("Press Enter to close the app.")
+    #     sys.exit()
 
 
-def main():
+def main() -> None:
     # ----- start of file creation -----
-    dic = {
-        'Anúncios':['AN',0],
-        'Culto':['C',0],
-        'Escola Sabatina':['ES',0],
-        'Momentos de Louvor':['MDL',0],
-        'Momento Especial':['ME',{
-            'Durante a Escola Sabatina':0,
-            'Após a Escola Sabatina':0,
-            'Antes do Culto (Após os Anúncios)':0,
-            'Durante o Culto':0,
-            'Após o Culto':0
-        }],
-        'Programa da Tarde':['PDT',0]
+    dic: dict[str, str | list[str | dict[str, int]]] = {
+        "Anúncios": "AN",
+        "Culto": "C",
+        "Escola Sabatina": "ES",
+        "Momentos de Louvor": "MDL",
+        "Momento Especial": [
+            "ME",
+            {
+                "Durante a Escola Sabatina": 0,
+                "Após a Escola Sabatina": 0,
+                "Antes do Culto (Após os Anúncios)": 0,
+                "Durante o Culto": 0,
+                "Após o Culto": 0,
+            },
+        ],
+        "Programa da Tarde": "PDT",
     }
 
-    googleapis.SPREADSHEET_ID = Config.getkeys('sheetid')['spreadsheetid']
+    GoogleAPIs.SPREADSHEET_ID = Config.getkeys("sheetid")["spreadsheetid"]
 
-    if datetools.today <= datetime.datetime.strptime(googleapis.sheetsapi()[-1][0], '%d/%m/%Y').date():
+    if (
+        DateTools.today
+        <= datetime.strptime(GoogleAPIs.sheetsapi()[-1][0], "%d/%m/%Y").date()
+    ):
         # Main Working Directory
-        maindir = f'./Sábados/{datetools.satcalc(datetools.today)}/'
-        os.makedirs(os.path.dirname(maindir), exist_ok=True)
-
-        # Start the bat file
-        if Config.getkeys('youtube'):
-            batfile = open(maindir + 'Open Me.bat','w')
-            batfile.write('@echo off\n')
+        maindir: str = f"./Sábados/{DateTools.satcalc(DateTools.today)}/"
+        # Path(path.dirname(maindir).mkdir(exist_ok=True))
+        Path(maindir).mkdir(exist_ok=True)
 
         # Start the txt file
-        txtfile = open(maindir + f'{datetools.satcalc(datetools.today)}.txt','w')
-        txtfile.write(f'Programa {datetools.satcalc(datetools.today)}\n\n')
+        txtfile: TextIO = open(
+            maindir + f"{DateTools.satcalc(DateTools.today)}.txt", "w"
+        )
+        txtfile.write(f"Programa {DateTools.satcalc(DateTools.today)}\n\n")
 
-        Files = files(maindir,batfile,txtfile,dic)
+        # Start the bat file
+        batfile: TextIO | None = None
+        if Config.getkeys("youtube"):
+            batfile = open(maindir + "Open Me.bat", "w")
+            batfile.write("@echo off\n")
 
-        for row in reversed(googleapis.sheetsapi()):
-            if datetools.today <= datetime.datetime.strptime(row[0], '%d/%m/%Y').date():
-                getattr(Files,row[1].replace(' ','_'))(row)
+        files = Files(maindir, batfile, txtfile, dic)
+
+        for row in reversed(GoogleAPIs.sheetsapi()):
+            if DateTools.today <= datetime.strptime(row[0], "%d/%m/%Y").date():
+                getattr(files, row[1].replace(" ", "_"))(row)
 
         txtfile.close()
-        batfile.close()
+        if batfile is not None:
+            batfile.close()
 
-if __name__ == '__main__':
-    os.system("title " + "MMACP")
+
+if __name__ == "__main__":
+    system("title " + "MMACP")
     init()
     main()
-    input('Finished.\nPress Enter to close the app.')
+    input("Finished.\nPress Enter to close the app.")

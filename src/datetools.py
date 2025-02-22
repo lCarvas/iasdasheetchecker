@@ -1,32 +1,32 @@
-import datetime
+from datetime import date, timedelta
 
 
-class datetools:
-    today = datetime.date.today()
-    weekday = datetime.datetime.weekday(today)
-    trim = (today.month - 1) // 3 + 1
+class DateTools:
+    today: date = date.today()
+    weekday: int = date.weekday(today)
+    trim: int = (today.month - 1) // 3 + 1
 
     @staticmethod
-    def satcalc(ftoday):
-        if datetools.weekday == 6:
-            saturday = ftoday + datetime.timedelta(days=12 - datetools.weekday)
+    def satcalc(ftoday: date) -> date:
+        if DateTools.weekday == 6:
+            saturday: date = ftoday + timedelta(days=12 - DateTools.weekday)
         else:
-            saturday = ftoday + datetime.timedelta(days=5 - datetools.weekday)
+            saturday = ftoday + timedelta(days=5 - DateTools.weekday)
 
         return saturday
 
     @staticmethod
-    def trimsat():
-        daylst = []
-        i = datetools.today
-        while (
-            datetools.satcalc(i - datetime.timedelta(days=7)).month - 1
-        ) // 3 + 1 == (datetools.today.month - 1) // 3 + 1:
-            i = i + datetime.timedelta(days=-7)
-        while (datetools.satcalc(i).month - 1) // 3 + 1 == (
-            datetools.today.month - 1
+    def trimsat() -> list[str]:
+        daylst: list[str] = []
+        i: date = DateTools.today
+        while (DateTools.satcalc(i - timedelta(days=7)).month - 1) // 3 + 1 == (
+            DateTools.today.month - 1
         ) // 3 + 1:
-            daylst.append(str(datetools.satcalc(i)))
-            i = i + datetime.timedelta(days=7)
+            i = i + timedelta(days=-7)
+        while (DateTools.satcalc(i).month - 1) // 3 + 1 == (
+            DateTools.today.month - 1
+        ) // 3 + 1:
+            daylst.append(str(DateTools.satcalc(i)))
+            i = i + timedelta(days=7)
 
         return daylst
