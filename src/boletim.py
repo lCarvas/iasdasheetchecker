@@ -67,11 +67,11 @@ class Boletim:
 
     @staticmethod
     def checkfinaldate() -> str:
-            with open(path.abspath("config/links.yaml"), "r", encoding="utf-8") as f:
-                links: dict[str, str] = yaml.safe_load(f)
-                finaldate: str = list(links.keys())[-1]
-            f.close()
-            return finaldate
+        with open(path.abspath("config/links.yaml"), "r", encoding="utf-8") as f:
+            links: dict[str, str] = yaml.safe_load(f)
+            finaldate: str = list(links.keys())[-1]
+        f.close()
+        return finaldate
 
     @staticmethod
     def verifyLinks() -> None:
