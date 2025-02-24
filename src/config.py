@@ -23,7 +23,7 @@ class Config:
             print("Config file not found, creating...")
             with open("./config/config.yaml", "w") as f:
                 print("Running first time setup..")
-                sheetid: str = input("Please input the Spreadsheet id: ")
+                sheetid: str = input("Please input the Spreadsheet ID: ")
                 while (
                     youtubeUsage := input("Do you want to use YouTube? (Y/N): ").upper()
                 ) not in ["Y", "N"]:
@@ -60,7 +60,11 @@ class Config:
         with open(path.abspath("config/config.yaml"), "r", encoding="utf-8") as f:
             config = yaml.safe_load(f)
 
-        config["ids"]["spreadsheetid"] = input("Please input the Spreadsheet id: ")
+        config["ids"]["spreadsheetid"] = input(
+            "Please input the Spreadsheet ID (leave empty to discard changes): "
+        )
+        if config["ids"]["spreadsheetid"] == "":
+            return
         with open(path.abspath("config/config.yaml"), "w", encoding="utf-8") as f:
             config = yaml.safe_dump(config, f, default_flow_style=False)
 
