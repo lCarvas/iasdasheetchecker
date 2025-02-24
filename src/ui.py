@@ -4,7 +4,7 @@ from pynput.keyboard import Listener
 from versionmanager import VersionManager
 from config import Config
 from win32gui import GetWindowText, GetForegroundWindow
-from main import main
+from files import Files
 import msvcrt
 from time import sleep
 
@@ -105,7 +105,7 @@ class UI:
 
             match returnValue:
                 case "runMain":
-                    main()
+                    Files.filesMain()
                     UI.menuUI(updateAvailable)
 
                 case "getConfig":

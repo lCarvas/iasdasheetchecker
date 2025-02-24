@@ -1,7 +1,11 @@
-from typing import TextIO
+from datetime import datetime
 from googleapis import GoogleAPIs
+from datetools import DateTools
+from typing import TextIO
 from dic import hymndic
 from boletim import Boletim
+from config import Config
+from pathlib import Path
 import validators
 import json
 import urllib
@@ -168,3 +172,64 @@ class Files:
 
             self.txtfile.write(f"{frow[5]}\n")
             print()
+
+
+    def filesMain() -> None:
+        # ----- start of file creation -----
+        dic: dict[str, str | list[str | dict[str, int]]] = {
+            "Anúncios": "AN",
+            "Culto": "C",
+            "Escola Sabatina": "ES",
+            "Momentos de Louvor": "MDL",
+            "Momento Especial": [
+                "ME",
+                {
+                    "Durante a Escola Sabatina": 0,
+                    "Após a Escola Sabatina": 0,
+                    "Antes do Culto (Após os Anúncios)": 0,
+                    "Durante o Culto": 0,
+                    "Após o Culto": 0,
+                },
+            ],
+            "Programa da Tarde": "PDT",
+        }
+
+        GoogleAPIs.SPREADSHEET_ID = Config.getkeys("sheetid")
+
+        sheetsResult = GoogleAPIs.sheetsapi()
+
+        if (
+            DateTools.today
+            <= datetime.strptime(sheetsResult[-1][0], "%d/%m/%Y").date()
+        ):
+            # Main Working Directory
+            maindir: str = f"./Sábados/{DateTools.satcalc(DateTools.today)}/"
+            # Path(path.dirname(maindir).mkdir(exist_ok=True))
+            Path(maindir).mkdir(exist_ok=True)
+
+            # Start the txt file
+            txtfile: TextIO = open(
+                maindir + f"{DateTools.satcalc(DateTools.today)}.txt", "w"
+            )
+            txtfile.write(f"Programa {DateTools.satcalc(DateTools.today)}\n\n")
+
+            # Start the bat file
+            batfile: TextIO | None = None
+            if Config.getkeys("youtube"):
+                batfile = open(maindir + "Open Me.bat", "w")
+                batfile.write("@echo off\n")
+
+            files = Files(maindir, batfile, txtfile, dic)
+
+            for row in reversed(sheetsResult):
+                if DateTools.today <= datetime.strptime(row[0], "%d/%m/%Y").date():
+                    getattr(files, row[1].replace(" ", "_"))(row)
+
+            txtfile.close()
+            if batfile is not None:
+                batfile.close()
+
+            input("Finished.\nPress Enter to return to the menu.")
+            return
+
+        input("Nothing found.\nPress Enter to return to the menu.")
