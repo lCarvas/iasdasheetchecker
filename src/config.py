@@ -7,18 +7,15 @@ settingTypes = Literal["sheetid", "youtube"]
 
 class Config:
     @staticmethod
-    def getkeys(setting: settingTypes):
+    def getkeys(setting: settingTypes) -> dict[str, str | bool]:
         with open(path.abspath("config/config.yaml"), "r", encoding="utf-8") as f:
             config = yaml.safe_load(f)
 
-            if setting == "sheetid":
-                apikeys = {
-                    "spreadsheetid": config.get("ids")["spreadsheetid"],
-                }
-                return apikeys
+        if setting == "sheetid":
+            return config.get("ids")["spreadsheetid"]
 
-            if setting == "youtube":
-                return {"youtubekey": config.get("youtube")}
+        if setting == "youtube":
+            return config.get("settings")["youtube"]
 
     @staticmethod
     def firstTimeSetup() -> None:
@@ -40,6 +37,32 @@ class Config:
             input(
                 "Press Enter after you put the credentials file inside the config folder."
             )
+
+    @staticmethod
+    def swapBool() -> None:
+        with open(path.abspath("config/config.yaml"), "r", encoding="utf-8") as f:
+            config = yaml.safe_load(f)
+
+        if config.get("settings")["youtube"]:
+            config["settings"]["youtube"] = False
+
+            with open(path.abspath("config/config.yaml"), "w", encoding="utf-8") as f:
+                config = yaml.safe_dump(config, f, default_flow_style=False)
+            return
+
+        config["settings"]["youtube"] = True
+        with open(path.abspath("config/config.yaml"), "w", encoding="utf-8") as f:
+            config = yaml.safe_dump(config, f, default_flow_style=False)
+        return
+
+    @staticmethod
+    def getSpreadsheetID() -> None:
+        with open(path.abspath("config/config.yaml"), "r", encoding="utf-8") as f:
+            config = yaml.safe_load(f)
+
+        config["ids"]["spreadsheetid"] = input("Please input the Spreadsheet id: ")
+        with open(path.abspath("config/config.yaml"), "w", encoding="utf-8") as f:
+            config = yaml.safe_dump(config, f, default_flow_style=False)
 
     @staticmethod
     def verifyConfig(): ...

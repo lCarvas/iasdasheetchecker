@@ -2,7 +2,6 @@
 
 import requests
 from tqdm.auto import tqdm
-import time
 from os import startfile, path
 import sys
 
@@ -20,13 +19,9 @@ class VersionManager:
         return 0.0
 
     @staticmethod
-    def getUpdate(currentVersion: float) -> None:
-        if not currentVersion >= VersionManager.getLatestTag():
-            print("[bold red]!!! NEW VERSION AVAILABLE !!!")
-            print("Downloading...")
-            time.sleep(1)
-            startfile(path.abspath("updater.exe"))
-            sys.exit()
+    def getUpdate() -> None:
+        startfile(path.abspath("updater.exe"))
+        sys.exit()
 
     @staticmethod
     def download_file() -> None:

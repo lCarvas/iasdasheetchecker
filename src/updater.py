@@ -1,4 +1,4 @@
-from VersionManager import VersionManager
+from versionmanager import VersionManager
 import os
 from pathlib import Path
 

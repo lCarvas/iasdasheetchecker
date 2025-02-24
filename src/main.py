@@ -4,13 +4,14 @@ from datetime import datetime
 from googleapis import GoogleAPIs
 from datetools import DateTools
 from files import Files
-from VersionManager import VersionManager
+from versionmanager import VersionManager
 from config import Config
 from boletim import Boletim
 from typing import TextIO
+import ui
 
 
-CURRENT_VERSION = 1.45
+CURRENT_VERSION = 1.5
 
 
 def init():
@@ -20,12 +21,8 @@ def init():
     Config.firstTimeSetup()
     VersionManager.verifyUpdater()
     Boletim.verifyLinks()
-    VersionManager.getUpdate(CURRENT_VERSION)
+    ui.UI.mainUI(updateAvailable = VersionManager.getLatestTag() > CURRENT_VERSION)
 
-    # if None in Config.getkeys("sheetid").values():
-    #     print("Config file not filled in properly, did you put the key in correctly?")
-    #     input("Press Enter to close the app.")
-    #     sys.exit()
 
 
 def main() -> None:
@@ -48,7 +45,7 @@ def main() -> None:
         "Programa da Tarde": "PDT",
     }
 
-    GoogleAPIs.SPREADSHEET_ID = Config.getkeys("sheetid")["spreadsheetid"]
+    GoogleAPIs.SPREADSHEET_ID = Config.getkeys("sheetid")
 
     if (
         DateTools.today
@@ -81,9 +78,12 @@ def main() -> None:
         if batfile is not None:
             batfile.close()
 
+        input("Finished.\nPress Enter to return to the menu.")
+        return
+    
+    input("Nothing found.\nPress Enter to return to the menu.")
+
 
 if __name__ == "__main__":
     system("title " + "MMACP")
     init()
-    main()
-    input("Finished.\nPress Enter to close the app.")
