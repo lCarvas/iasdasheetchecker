@@ -1,21 +1,23 @@
 import yaml
 from os import path
 from typing import Literal
+from dic import hymndic
 
-settingTypes = Literal["sheetid", "youtube"]
+settingTypes = Literal[
+    "spreadSheetID",
+    "youtubeUsage",
+    "doxologiaInvocacao",
+    "doxologiaColeta",
+    "doxologiaSaida",
+]
 
 
 class Config:
     @staticmethod
-    def getkeys(setting: settingTypes) -> dict[str, str | bool]:
+    def getkeys(setting: settingTypes) -> str:
         with open(path.abspath("config/config.yaml"), "r", encoding="utf-8") as f:
             config = yaml.safe_load(f)
-
-        if setting == "sheetid":
-            return config.get("spreadsheetid")
-
-        if setting == "youtube":
-            return config.get("youtube")
+            return config.get(setting)
 
     @staticmethod
     def createConfig() -> None:
@@ -24,14 +26,32 @@ class Config:
 
             returnDict: dict[str, str | bool] = {}
 
-            returnDict["spreadsheetid"] = input("Please input the Spreadsheet ID: ")
+            returnDict["spreadSheetID"] = input("Please input the Spreadsheet ID: ")
 
             while (
                 youtubeUsage := input("Do you want to use YouTube? (Y/N): ").upper()
             ) not in ["Y", "N"]:
                 pass
 
+            while (
+                doxologiainvocacao := input("Hino Invocação: ").upper()
+            ) not in hymndic.keys():
+                pass
+
+            while (
+                doxologiacoleta := input("Hino Coleta: ").upper()
+            ) not in hymndic.keys():
+                pass
+
+            while (
+                doxologiasaida := input("Hino Saída: ").upper()
+            ) not in hymndic.keys():
+                pass
+
             returnDict["youtubeUsage"] = True if youtubeUsage == "Y" else False
+            returnDict["doxologiaInvocacao"] = doxologiainvocacao
+            returnDict["doxologiaColeta"] = doxologiacoleta
+            returnDict["doxologiaSaida"] = doxologiasaida
 
             yaml.safe_dump(returnDict, f)
 
@@ -60,23 +80,26 @@ class Config:
         with open(path.abspath("config/config.yaml"), "r", encoding="utf-8") as f:
             config = yaml.safe_load(f)
 
-        config["spreadsheetid"] = input(
+        config["spreadSheetID"] = input(
             "Please input the Spreadsheet ID (leave empty to discard changes): "
         )
-        if config["spreadsheetid"] == "":
+        if config["spreadSheetID"] == "":
             return
         with open(path.abspath("config/config.yaml"), "w", encoding="utf-8") as f:
             config = yaml.safe_dump(config, f, default_flow_style=False)
 
     @staticmethod
-    def verifyConfig():
+    def verifyConfig() -> None:
         try:
             with open(path.abspath("config/config.yaml"), "r") as f:
                 config = yaml.safe_load(f)
 
                 for key in [
-                    "spreadsheetid",
-                    "youtubeusage",
+                    "spreadSheetID",
+                    "youtubeUsage",
+                    "doxologiaInvocacao",
+                    "doxologiaColeta",
+                    "doxologiaSaida",
                 ]:
                     if config.get(key) is None:
                         raise AttributeError

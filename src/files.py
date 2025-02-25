@@ -115,7 +115,7 @@ class Files:
             # Doxologia
             if self.batfile is not None:
                 self.batfile.write(
-                    "start https://www.youtube.com/playlist?list=PL3sgRPOFYAyxahQy75UOv_wGlAvegskT_\n"
+                    f"start {Config.getkeys('doxologiainvocacao')}\nstart {Config.getkeys('doxologiacoleta')}\nstart {Config.getkeys('doxologiasaida')}\n"
                 )
             for j in range(7, 10):
                 if frow[j] != "Normal":
@@ -126,7 +126,9 @@ class Files:
                             self.batfile.write(f"start {hymndic[frow[j]]}\n")
                     self.txtfile.write(f"{self.title_get(frow[j])}\n")
                 else:
-                    self.txtfile.write(f"{frow[j]}\n")
+                    self.txtfile.write(
+                        f"Invocação: {Config.getkeys('doxologiainvocacao')}\nColeta: {Config.getkeys('doxologiainvocacao')}\nSaída: {Config.getkeys('doxologiainvocacao')}\n"
+                    )
             self.txtfile.write("\n")
             print()
 
@@ -173,7 +175,6 @@ class Files:
             self.txtfile.write(f"{frow[5]}\n")
             print()
 
-
     def filesMain() -> None:
         # ----- start of file creation -----
         dic: dict[str, str | list[str | dict[str, int]]] = {
@@ -198,10 +199,7 @@ class Files:
 
         sheetsResult = GoogleAPIs.sheetsapi()
 
-        if (
-            DateTools.today
-            <= datetime.strptime(sheetsResult[-1][0], "%d/%m/%Y").date()
-        ):
+        if DateTools.today <= datetime.strptime(sheetsResult[-1][0], "%d/%m/%Y").date():
             # Main Working Directory
             maindir: str = f"./Sábados/{DateTools.satcalc(DateTools.today)}/"
             # Path(path.dirname(maindir).mkdir(exist_ok=True))
