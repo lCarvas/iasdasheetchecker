@@ -1,4 +1,4 @@
-from os import system, name
+from os import system, name, startfile, path
 from queue import Queue
 from pynput.keyboard import Listener
 from versionmanager import VersionManager
@@ -7,6 +7,7 @@ from win32gui import GetWindowText, GetForegroundWindow
 from files import Files
 import msvcrt
 from time import sleep
+from sys import exit
 
 keyPressReturnValue = Queue()
 
@@ -21,12 +22,14 @@ class UI:
 
         if updateAvailable:
             print(
-                "[1] Run\n[2] Settings\n[3] \033[31mUpdate Available!\033[0m\n[4] Exit"
+                "[1] Run\n[2] Open Folder\n[3] Settings\n[4] \033[31mUpdate Available!\033[0m\n[5] Exit"
             )
             UI.UIInteraction(False, updateAvailable)
             return
 
-        print("[1] Run\n[2] Settings\n[3] No Update Available\n[4] Exit")
+        print(
+            "[1] Run\n[2] Open Folder\n[3] Settings\n[4] No Update Available\n[5] Exit"
+        )
         UI.UIInteraction(False, updateAvailable)
 
     @staticmethod
@@ -38,18 +41,22 @@ class UI:
                         keyPressReturnValue.put("runMain")
                         return False
 
-                    # Check Settings
                     if key.char == "2":
+                        keyPressReturnValue.put("openFolder")
+                        return False
+
+                    # Check Settings
+                    if key.char == "3":
                         keyPressReturnValue.put("getConfig")
                         return False
 
                     # Update if available
                     if updateAvailable:
-                        if key.char == "3":
+                        if key.char == "4":
                             keyPressReturnValue.put("getUpdate")
                             return False
 
-                    if key.char == "4":
+                    if key.char == "5":
                         keyPressReturnValue.put("exit")
                         return False
 
@@ -97,7 +104,7 @@ class UI:
         while True:
             returnValue: str = keyPressReturnValue.get()
 
-            if not msvcrt.kbhit():  # if there's nothing in the buffer wait XD
+            if not msvcrt.kbhit():  # if there's nothing in the buffer wait
                 sleep(0.01)
 
             while msvcrt.kbhit():
@@ -108,6 +115,10 @@ class UI:
                     Files.filesMain()
                     UI.menuUI(updateAvailable)
 
+                case "openFolder":
+                    startfile(path.abspath("Sábados/"))
+                    UI.UIInteraction(False, updateAvailable)
+
                 case "getConfig":
                     UI.configUI(updateAvailable)
 
@@ -116,7 +127,7 @@ class UI:
 
                 case "exit":
                     system("cls" if name == "nt" else "clear")
-                    return
+                    exit()
 
                 case "spreadSheetIDChange":
                     Config.getSpreadsheetID()

@@ -9,7 +9,7 @@ from pathlib import Path
 import validators
 import json
 import urllib
-from cleantext import clean  # type: ignore
+from cleantext import clean
 
 
 class Files:
@@ -226,7 +226,19 @@ class Files:
             "Programa da Tarde": "PDT",
         }
 
+        Path("./Sábados/").mkdir(parents=True, exist_ok=True)
+
         GoogleAPIs.SPREADSHEET_ID = Config.getkeys("spreadSheetID")
+
+        values = [
+            [
+                biglist[j][i] if i < len(biglist[j]) else ""
+                for j in range(1, len(biglist))
+            ]
+            for i in range(len(biglist[0]))
+        ]
+
+        funnydict = {str(biglist[0][i]): values[i] for i in range(len(biglist[0]))}
 
         sheetsResult = GoogleAPIs.sheetsapi()
 

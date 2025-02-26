@@ -1,11 +1,11 @@
 from versionmanager import VersionManager
-import os
+from os import system, startfile
 from pathlib import Path
 
-os.system("title " + "Updater")
+system("title " + "Updater")
 
 print("Downloading...")
 
 VersionManager.download_file()
 
-os.startfile(Path("./MMACP.exe"))
+startfile(Path("./MMACP.exe"))

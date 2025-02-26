@@ -2,6 +2,7 @@ import yaml
 from os import path
 from typing import Literal
 from dic import hymndic
+from pathlib import Path
 
 settingTypes = Literal[
     "spreadSheetID",
@@ -21,6 +22,7 @@ class Config:
 
     @staticmethod
     def createConfig() -> None:
+        Path("./config/").mkdir(parents=True, exist_ok=True)
         with open("./config/config.yaml", "w") as f:
             print("Creating config file..")
 
@@ -104,6 +106,6 @@ class Config:
                     if config.get(key) is None:
                         raise AttributeError
 
-        except AttributeError or FileNotFoundError:
+        except (AttributeError, FileNotFoundError):
             print("Config file invalid or not found, creating...")
             Config.createConfig()
