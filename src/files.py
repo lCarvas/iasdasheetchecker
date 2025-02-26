@@ -84,15 +84,19 @@ class Files:
                 else:
                     if frow[i] in hymndic.keys():
                         self.batfile.write(f"start {hymndic[frow[i]]}\n")
+            match i:
+                case 2:
+                    self.txtfile.write(f"Hino Inicial: {self.title_get(frow[i])}\n")
 
-            self.txtfile.write(f"{self.title_get(frow[i])}\n\n")
+                case 3:
+                    self.txtfile.write(f"Hino Final: {self.title_get(frow[i])}\n")
+
+        self.txtfile.write("\n")
 
     def ficheiros(self, frow: list[str]):
         try:
             if frow[4] != "":
                 self.txtfile.write(f"{GoogleAPIs.driveapi(frow[4], self.maindir)}\n\n")
-            else:
-                self.txtfile.write("\n")
         except IndexError:
             pass
 
@@ -110,26 +114,53 @@ class Files:
             self.c += 1
             self.starting(frow)
             self.hinos(frow)
-            self.ficheiros(frow)
 
-            # Doxologia
-            if self.batfile is not None:
-                self.batfile.write(
-                    f"start {Config.getkeys('doxologiainvocacao')}\nstart {Config.getkeys('doxologiacoleta')}\nstart {Config.getkeys('doxologiasaida')}\n"
-                )
             for j in range(7, 10):
-                if frow[j] != "Normal":
-                    if self.batfile is not None:
-                        if self.link_ver(frow[j]):
-                            self.batfile.write(f"start {frow[j]}\n")
-                        else:
-                            self.batfile.write(f"start {hymndic[frow[j]]}\n")
-                    self.txtfile.write(f"{self.title_get(frow[j])}\n")
-                else:
-                    self.txtfile.write(
-                        f"Invocação: {Config.getkeys('doxologiainvocacao')}\nColeta: {Config.getkeys('doxologiainvocacao')}\nSaída: {Config.getkeys('doxologiainvocacao')}\n"
-                    )
+                match (j, frow[j]):
+                    case (7, "Normal"):
+                        hNum = hymndic[Config.getkeys("doxologiaInvocacao")]
+                        if self.batfile is not None:
+                            self.batfile.write(f"start {hNum}")
+                        self.txtfile.write(f"Invocação: {hNum}\n")
+
+                    case (7, _):
+                        if self.batfile is not None:
+                            if self.link_ver(frow[j]):
+                                self.batfile.write(f"start {frow[j]}\n")
+                            else:
+                                self.batfile.write(f"start {hymndic[frow[j]]}\n")
+                        self.txtfile.write(f"Invocação: {self.title_get(frow[j])}\n")
+
+                    case (8, "Normal"):
+                        hNum = hymndic[Config.getkeys("doxologiaColeta")]
+                        if self.batfile is not None:
+                            self.batfile.write(f"start {hNum}")
+                        self.txtfile.write(f"Coleta: {hNum}\n")
+
+                    case (8, _):
+                        if self.batfile is not None:
+                            if self.link_ver(frow[j]):
+                                self.batfile.write(f"start {frow[j]}\n")
+                            else:
+                                self.batfile.write(f"start {hymndic[frow[j]]}\n")
+                        self.txtfile.write(f"Coleta: {self.title_get(frow[j])}\n")
+
+                    case (9, "Normal"):
+                        hNum = hymndic[Config.getkeys("doxologiaSaida")]
+                        if self.batfile is not None:
+                            self.batfile.write(f"start {hNum}")
+                        self.txtfile.write(f"Saída: {hNum}\n")
+
+                    case (9, _):
+                        if self.batfile is not None:
+                            if self.link_ver(frow[j]):
+                                self.batfile.write(f"start {frow[j]}\n")
+                            else:
+                                self.batfile.write(f"start {hymndic[frow[j]]}\n")
+                        self.txtfile.write(f"Saída: {self.title_get(frow[j])}\n")
+
             self.txtfile.write("\n")
+            self.ficheiros(frow)
             print()
 
     def Escola_Sabatina(self, frow: list[str]):
@@ -195,7 +226,7 @@ class Files:
             "Programa da Tarde": "PDT",
         }
 
-        GoogleAPIs.SPREADSHEET_ID = Config.getkeys("sheetid")
+        GoogleAPIs.SPREADSHEET_ID = Config.getkeys("spreadSheetID")
 
         sheetsResult = GoogleAPIs.sheetsapi()
 
@@ -207,13 +238,15 @@ class Files:
 
             # Start the txt file
             txtfile: TextIO = open(
-                maindir + f"{DateTools.satcalc(DateTools.today)}.txt", "w"
+                maindir + f"{DateTools.satcalc(DateTools.today)}.txt",
+                "w",
+                encoding="utf-8",
             )
             txtfile.write(f"Programa {DateTools.satcalc(DateTools.today)}\n\n")
 
             # Start the bat file
             batfile: TextIO | None = None
-            if Config.getkeys("youtube"):
+            if Config.getkeys("youtubeUsage"):
                 batfile = open(maindir + "Open Me.bat", "w")
                 batfile.write("@echo off\n")
 

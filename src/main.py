@@ -9,8 +9,8 @@ CURRENT_VERSION = 1.5
 
 
 def init():
-    Path("./config/").mkdir(parents=True, exist_ok=True)
-    Path("./Sábados/").mkdir(parents=True, exist_ok=True)
+    Path("./config/").mkdir(parents=True, exist_ok=True) #!TODO GO TO CONFIG
+    Path("./Sábados/").mkdir(parents=True, exist_ok=True) #!TODO GO TO FILES
 
     Config.verifyConfig()
     VersionManager.verifyUpdater()
