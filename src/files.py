@@ -182,8 +182,13 @@ class Files:
             self.ficheiros(valuesDict, index)
 
             # Boletim Missionário
+            self.txtfile.write(
+                f"Carta Missionária: {valuesDict['Carta Missionária'][index]}\n\n"
+            )
             if valuesDict["Carta Missionária"][index] == "Vídeo":
                 Boletim.downloadboletim(self.maindir)
+
+            self.txtfile.write(f"Programa:\n{valuesDict['Programa'][index]}\n\n")
             print()
 
     def Momentos_de_Louvor(self, valuesDict: dict[str, list[str]], index: int):
@@ -225,7 +230,7 @@ class Files:
             self.hinos(valuesDict, index)
             self.ficheiros(valuesDict, index)
 
-            self.txtfile.write(f"{valuesDict['Programa'][index]}\n")
+            self.txtfile.write(f"{valuesDict['Programa'][index]}\n\n")
             print()
 
     def filesMain() -> None:
