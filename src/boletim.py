@@ -34,7 +34,7 @@ class Boletim:
     @staticmethod
     def linksyaml() -> None:
         yamllist = dict(zip(DateTools.trimsat(), Boletim.getlinklist()))
-        with open(path.abspath("config/links.yaml"), "w") as f:
+        with open(path.abspath("config/links.yaml"), "w", encoding="utf-8") as f:
             yaml.dump(yamllist, f, sort_keys=False)
 
         f.close()

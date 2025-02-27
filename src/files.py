@@ -68,142 +68,164 @@ class Files:
         self.mdl = MDL
         self.pdt = PDT
 
-    def starting(self, frow: list[str]):
-        print(f"Starting {frow[1]}")
+    def starting(self, valuesDict: dict[str, list[str]], index: int):
+        print(f"Starting {valuesDict['Tipo de Formulário'][index]}")
         if self.batfile is not None:
             self.batfile.write(
-                f"start https://www.google.com/search?q={self.dic[f'{frow[1]}'][0]}\n"
+                f"start https://www.google.com/search?q={self.dic[f'{valuesDict["Tipo de Formulário"][index]}'][0]}\n"
             )
-        self.txtfile.write(f"{frow[1]}\n")
+        self.txtfile.write(f"{valuesDict['Tipo de Formulário'][index]}\n")
 
-    def hinos(self, frow: list[str]):
-        for i in range(2, 4):
+    def hinos(self, valuesDict: dict[str, list[str]], index: int):
+        for item in ("1° Hino", "2° Hino"):
             if self.batfile is not None:
-                if self.link_ver(frow[i]):
-                    self.batfile.write(f"start {frow[i]}\n")
+                if self.link_ver(valuesDict[item][index]):
+                    self.batfile.write(f"start {valuesDict[item][index]}\n")
                 else:
-                    if frow[i] in hymndic.keys():
-                        self.batfile.write(f"start {hymndic[frow[i]]}\n")
-            match i:
-                case 2:
-                    self.txtfile.write(f"Hino Inicial: {self.title_get(frow[i])}\n")
-
-                case 3:
-                    self.txtfile.write(f"Hino Final: {self.title_get(frow[i])}\n")
+                    if valuesDict[item][index] in hymndic.keys():
+                        self.batfile.write(
+                            f"start {hymndic[valuesDict[item][index]]}\n"
+                        )
+            self.txtfile.write(f"{item}: {self.title_get(valuesDict[item][index])}\n")
 
         self.txtfile.write("\n")
 
-    def ficheiros(self, frow: list[str]):
+    def ficheiros(self, valuesDict: dict[str, list[str]], index: int):
         try:
-            if frow[4] != "":
-                self.txtfile.write(f"{GoogleAPIs.driveapi(frow[4], self.maindir)}\n\n")
+            if valuesDict["Ficheiros Necessários"][index] != "":
+                self.txtfile.write(
+                    f"{GoogleAPIs.driveapi(valuesDict['Ficheiros Necessários'][index], self.maindir)}\n\n"
+                )
         except IndexError:
             pass
 
     # ------------------------------------------------------
 
-    def Anúncios(self, frow: list[str]):
+    def Anúncios(self, valuesDict: dict[str, list[str]], index: int):
         if self.an == 0:
             self.an += 1
-            self.starting(frow)
-            self.ficheiros(frow)
+            self.starting(valuesDict, index)
+            self.ficheiros(valuesDict, index)
             print()
 
-    def Culto(self, frow: list[str]):
+    def Culto(self, valuesDict: dict[str, list[str]], index: int):
         if self.c == 0:
             self.c += 1
-            self.starting(frow)
-            self.hinos(frow)
+            self.starting(valuesDict, index)
+            self.hinos(valuesDict, index)
 
-            for j in range(7, 10):
-                match (j, frow[j]):
-                    case (7, "Normal"):
-                        hNum = hymndic[Config.getkeys("doxologiaInvocacao")]
+            for item in ("Hino Invocação", "Hino Coleta", "Hino Saída"):
+                match (item, valuesDict[item][index]):
+                    case ("Hino Invocação", "Normal"):
+                        hNum = Config.getConfigValues("doxologiaInvocacao")
                         if self.batfile is not None:
-                            self.batfile.write(f"start {hNum}")
-                        self.txtfile.write(f"Invocação: {hNum}\n")
+                            self.batfile.write(f"start {hymndic[hNum]}")
+                        self.txtfile.write(f"{item}: {hNum}\n")
 
-                    case (7, _):
+                    case ("Hino Invocação", _):
                         if self.batfile is not None:
-                            if self.link_ver(frow[j]):
-                                self.batfile.write(f"start {frow[j]}\n")
+                            if self.link_ver(valuesDict[item][index]):
+                                self.batfile.write(f"start {valuesDict[item][index]}\n")
                             else:
-                                self.batfile.write(f"start {hymndic[frow[j]]}\n")
-                        self.txtfile.write(f"Invocação: {self.title_get(frow[j])}\n")
+                                self.batfile.write(
+                                    f"start {hymndic[valuesDict[item][index]]}\n"
+                                )
+                        self.txtfile.write(
+                            f"{item}: {self.title_get(valuesDict[item][index])}\n"
+                        )
 
-                    case (8, "Normal"):
-                        hNum = hymndic[Config.getkeys("doxologiaColeta")]
+                    case ("Hino Coleta", "Normal"):
+                        hNum = Config.getConfigValues("doxologiaColeta")
                         if self.batfile is not None:
-                            self.batfile.write(f"start {hNum}")
-                        self.txtfile.write(f"Coleta: {hNum}\n")
+                            self.batfile.write(f"start {hymndic[hNum]}")
+                        self.txtfile.write(f"{item}: {hNum}\n")
 
-                    case (8, _):
+                    case ("Hino Coleta", _):
                         if self.batfile is not None:
-                            if self.link_ver(frow[j]):
-                                self.batfile.write(f"start {frow[j]}\n")
+                            if self.link_ver(valuesDict[item][index]):
+                                self.batfile.write(f"start {valuesDict[item][index]}\n")
                             else:
-                                self.batfile.write(f"start {hymndic[frow[j]]}\n")
-                        self.txtfile.write(f"Coleta: {self.title_get(frow[j])}\n")
+                                self.batfile.write(
+                                    f"start {hymndic[valuesDict[item][index]]}\n"
+                                )
+                        self.txtfile.write(
+                            f"{item}: {self.title_get(valuesDict[item][index])}\n"
+                        )
 
-                    case (9, "Normal"):
-                        hNum = hymndic[Config.getkeys("doxologiaSaida")]
+                    case ("Hino Saída", "Normal"):
+                        hNum = Config.getConfigValues("doxologiaSaida")
                         if self.batfile is not None:
-                            self.batfile.write(f"start {hNum}")
-                        self.txtfile.write(f"Saída: {hNum}\n")
+                            self.batfile.write(f"start {hymndic[hNum]}")
+                        self.txtfile.write(f"{item}: {hNum}\n")
 
-                    case (9, _):
+                    case ("Hino Saída", _):
                         if self.batfile is not None:
-                            if self.link_ver(frow[j]):
-                                self.batfile.write(f"start {frow[j]}\n")
+                            if self.link_ver(valuesDict[item][index]):
+                                self.batfile.write(f"start {valuesDict[item][index]}\n")
                             else:
-                                self.batfile.write(f"start {hymndic[frow[j]]}\n")
-                        self.txtfile.write(f"Saída: {self.title_get(frow[j])}\n")
+                                self.batfile.write(
+                                    f"start {hymndic[valuesDict[item][index]]}\n"
+                                )
+                        self.txtfile.write(
+                            f"{item}: {self.title_get(valuesDict[item][index])}\n"
+                        )
 
             self.txtfile.write("\n")
-            self.ficheiros(frow)
+            self.ficheiros(valuesDict, index)
             print()
 
-    def Escola_Sabatina(self, frow: list[str]):
+    def Escola_Sabatina(self, valuesDict: dict[str, list[str]], index: int):
         if self.es == 0:
             self.es += 1
-            self.starting(frow)
-            self.hinos(frow)
-            self.ficheiros(frow)
+            self.starting(valuesDict, index)
+            self.hinos(valuesDict, index)
+            self.ficheiros(valuesDict, index)
 
             # Boletim Missionário
-            if frow[6] == "Vídeo":
+            if valuesDict["Carta Missionária"][index] == "Vídeo":
                 Boletim.downloadboletim(self.maindir)
             print()
 
-    def Momentos_de_Louvor(self, frow: list[str]):
+    def Momentos_de_Louvor(self, valuesDict: dict[str, list[str]], index: int):
         if self.mdl == 0:
             self.mdl += 1
-            self.starting(frow)
-            self.hinos(frow)
-            self.ficheiros(frow)
+            self.starting(valuesDict, index)
+            self.hinos(valuesDict, index)
+            self.ficheiros(valuesDict, index)
             print()
 
-    def Momento_Especial(self, frow: list[str]):
-        if self.dic["Momento Especial"][1][frow[10]] == 0:
-            self.dic["Momento Especial"][1][frow[10]] += 1
-            self.starting(frow)
-            self.ficheiros(frow)
+    def Momento_Especial(self, valuesDict: dict[str, list[str]], index: int):
+        if (
+            self.dic["Momento Especial"][1][
+                valuesDict["Quando irá decorrer o Momento Especial?"][index]
+            ]
+            == 0
+        ):
+            self.dic["Momento Especial"][1][
+                valuesDict["Quando irá decorrer o Momento Especial?"][index]
+            ] += 1
+            self.starting(valuesDict, index)
+            self.ficheiros(valuesDict, index)
 
             if self.batfile is not None:
-                if frow[11] != "Não":
-                    self.batfile.write(f"\nstart {frow[11]}\n")
+                if valuesDict["Será necessária música?"][index] != "Não":
+                    self.batfile.write(
+                        f"\nstart {valuesDict['Será necessária música?'][index]}\n"
+                    )
 
-            self.txtfile.write(f"\n{frow[10]}\n{self.title_get(frow[11])}\n\n")
+            self.txtfile.write(
+                f"\n{valuesDict['Quando irá decorrer o Momento Especial?'][index]}\n{self.title_get(valuesDict['Será necessária música?'][index])}\n\n"
+            )
             print()
 
-    def Programa_da_Tarde(self, frow: list[str]):
+    def Programa_da_Tarde(self, valuesDict: dict[str, list[str]], index: int):
         if self.pdt == 0:
             self.pdt += 1
-            self.starting(frow)
-            self.hinos(frow)
-            self.ficheiros(frow)
+            self.starting(valuesDict, index)
+            self.hinos(valuesDict, index)
+            self.ficheiros(valuesDict, index)
 
-            self.txtfile.write(f"{frow[5]}\n")
+            self.txtfile.write(f"{valuesDict['Programa'][index]}\n")
             print()
 
     def filesMain() -> None:
@@ -228,21 +250,25 @@ class Files:
 
         Path("./Sábados/").mkdir(parents=True, exist_ok=True)
 
-        GoogleAPIs.SPREADSHEET_ID = Config.getkeys("spreadSheetID")
-
-        values = [
-            [
-                biglist[j][i] if i < len(biglist[j]) else ""
-                for j in range(1, len(biglist))
-            ]
-            for i in range(len(biglist[0]))
-        ]
-
-        funnydict = {str(biglist[0][i]): values[i] for i in range(len(biglist[0]))}
+        GoogleAPIs.SPREADSHEET_ID = Config.getConfigValues("spreadsheetID")
 
         sheetsResult = GoogleAPIs.sheetsapi()
 
-        if DateTools.today <= datetime.strptime(sheetsResult[-1][0], "%d/%m/%Y").date():
+        valuesDict = {
+            str(sheetsResult[0][i]): [
+                [
+                    sheetsResult[j][i] if i < len(sheetsResult[j]) else ""
+                    for j in range(len(sheetsResult) - 1, 0, -1)
+                ]
+                for i in range(len(sheetsResult[0]))
+            ][i]
+            for i in range(len(sheetsResult[0]))
+        }
+
+        if (
+            DateTools.today
+            <= datetime.strptime(valuesDict["Sábado"][0], "%d/%m/%Y").date()
+        ):
             # Main Working Directory
             maindir: str = f"./Sábados/{DateTools.satcalc(DateTools.today)}/"
             # Path(path.dirname(maindir).mkdir(exist_ok=True))
@@ -258,15 +284,19 @@ class Files:
 
             # Start the bat file
             batfile: TextIO | None = None
-            if Config.getkeys("youtubeUsage"):
+            if Config.getConfigValues("youtubeUsage"):
                 batfile = open(maindir + "Open Me.bat", "w")
                 batfile.write("@echo off\n")
 
             files = Files(maindir, batfile, txtfile, dic)
 
-            for row in reversed(sheetsResult):
-                if DateTools.today <= datetime.strptime(row[0], "%d/%m/%Y").date():
-                    getattr(files, row[1].replace(" ", "_"))(row)
+            for index, value in enumerate(valuesDict["Sábado"]):
+                if DateTools.today >= datetime.strptime(value, "%d/%m/%Y").date():
+                    break
+
+                getattr(
+                    files, valuesDict["Tipo de Formulário"][index].replace(" ", "_")
+                )(valuesDict, index)
 
             txtfile.close()
             if batfile is not None:

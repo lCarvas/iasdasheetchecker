@@ -12,7 +12,7 @@ import sys
 class GoogleAPIs:
     SCOPES = ["https://www.googleapis.com/auth/spreadsheets.readonly"]
 
-    SAMPLE_RANGE_NAME = "Main!A2:L"
+    SAMPLE_RANGE_NAME = "Main!A1:L"
     SPREADSHEET_ID = None
 
     @staticmethod
