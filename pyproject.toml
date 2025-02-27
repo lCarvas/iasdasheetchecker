@@ -1,0 +1,61 @@
+[project]
+name = "iasdasheetchecker"
+version = "1.5.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "beautifulsoup4==4.13.3",
+    "cachetools==5.5.2",
+    "certifi==2025.1.31",
+    "charset-normalizer==3.4.1",
+    "clean-text==0.6.0",
+    "colorama==0.4.6",
+    "emoji==1.7.0",
+    "evdev==1.9.1 ; 'linux' in sys_platform",
+    "filelock==3.17.0",
+    "ftfy==6.3.1",
+    "gdown==5.2.0",
+    "google-api-core==2.24.1",
+    "google-api-python-client==2.162.0",
+    "google-auth==2.38.0",
+    "google-auth-httplib2==0.2.0",
+    "google-auth-oauthlib==1.2.1",
+    "googleapis-common-protos==1.68.0",
+    "httplib2==0.22.0",
+    "idna==3.10",
+    "oauthlib==3.2.2",
+    "proto-plus==1.26.0",
+    "protobuf==5.29.3",
+    "pyasn1==0.6.1",
+    "pyasn1-modules==0.4.1",
+    "pynput==1.7.7",
+    "pyobjc-core==11.0 ; sys_platform == 'darwin'",
+    "pyobjc-framework-applicationservices==11.0 ; sys_platform == 'darwin'",
+    "pyobjc-framework-cocoa==11.0 ; sys_platform == 'darwin'",
+    "pyobjc-framework-coretext==11.0 ; sys_platform == 'darwin'",
+    "pyobjc-framework-quartz==11.0 ; sys_platform == 'darwin'",
+    "pyparsing==3.2.1",
+    "pysocks==1.7.1",
+    "python-xlib==0.33 ; 'linux' in sys_platform",
+    "pywin32==308",
+    "pyyaml==6.0.2",
+    "requests==2.32.3",
+    "requests-oauthlib==2.0.0",
+    "rsa==4.9",
+    "six==1.17.0",
+    "soupsieve==2.6",
+    "tqdm==4.67.1",
+    "typing-extensions==4.12.2",
+    "uritemplate==4.1.1",
+    "urllib3==2.3.0",
+    "validators==0.34.0",
+    "wcwidth==0.2.13",
+]
+
+[dependency-groups]
+dev = [
+    "cython>=3.0.12",
+    "nuitka>=2.6.7",
+    "setuptools>=75.8.2",
+]

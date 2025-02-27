@@ -8,7 +8,7 @@ from ui import UI
 CURRENT_VERSION = 1.5
 
 
-def init():
+def main():
     Path("./config/").mkdir(parents=True, exist_ok=True)
     Path("./Sábados/").mkdir(parents=True, exist_ok=True)
 
@@ -20,4 +20,4 @@ def init():
 
 if __name__ == "__main__":
     system("title " + "MMACP")
-    init()
+    main()

@@ -6,7 +6,6 @@ from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
 import os
 import gdown
-import sys
 
 
 class GoogleAPIs:
@@ -41,7 +40,6 @@ class GoogleAPIs:
         except FileNotFoundError:
             print("Credentials file not found, have you put it in the config folder?")
             input("Press Enter to close the app.")
-            sys.exit()
 
         try:
             service = build("sheets", "v4", credentials=creds, static_discovery=False)
