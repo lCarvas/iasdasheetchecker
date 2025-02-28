@@ -8,6 +8,11 @@ class DateTools:
 
     @staticmethod
     def satcalc(ftoday: date) -> date:
+        """Calculates the date of the closest Saturday to the desired date
+
+        Args:
+            ftoday (date): Date to use
+        """
         if DateTools.weekday == 6:
             saturday: date = ftoday + timedelta(days=12 - DateTools.weekday)
         else:
@@ -17,6 +22,7 @@ class DateTools:
 
     @staticmethod
     def trimsat() -> list[str]:
+        """Returns a list with the dates of all Saturdays in the current trimester in string form"""
         daylst: list[str] = []
         i: date = DateTools.today
         while (DateTools.satcalc(i - timedelta(days=7)).month - 1) // 3 + 1 == (

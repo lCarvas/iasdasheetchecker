@@ -14,7 +14,8 @@ from cleantext import clean
 
 class Files:
     @staticmethod
-    def link_ver(furl: str):
+    def link_ver(furl: str) -> bool:
+        """Returns whether or not a string is a valid link"""
         if validators.url(furl):
             return True
         else:
@@ -23,6 +24,14 @@ class Files:
     # got from https://stackoverflow.com/a/52664178
     @staticmethod
     def title_get(furl: str) -> str:
+        """Returns the title of a video if furl is a link, returns furl if not
+
+        Args:
+            furl (str): _description_
+
+        Returns:
+            str: _description_
+        """
         params: dict[str, str] = {"format": "json", "url": "%s" % furl}
         url = "https://www.youtube.com/oembed"
         query_string: str = urllib.parse.urlencode(params)
@@ -36,11 +45,11 @@ class Files:
         else:
             title = furl
 
-        # got from https://stackoverflow.com/a/4510805
-        for i, c in enumerate(title):
-            if c.isdigit():
-                title = title[i : i + 3]
-                break
+        # # got from https://stackoverflow.com/a/4510805
+        # for i, c in enumerate(title):
+        #     if c.isdigit():
+        #         title = title[i : i + 3]
+        #         break
 
         return title
 
@@ -58,6 +67,19 @@ class Files:
         MDL: int = 0,
         PDT: int = 0,
     ):
+        """Contructor
+
+        Args:
+            maindir (str): Working directory
+            batfile (TextIO | None): .bat file
+            txtfile (TextIO): .txt file
+            dic (dict[str, str  |  list[str  |  dict[str, int]]]): Dictionary containing all form types and respective abbreviations. Also contains a counter dict for ME Types
+            AN (int, optional): Counter variable for the number of times the function equivalent to this abbreviation ran. Defaults to 0.
+            C (int, optional): Counter variable for the number of times the function equivalent to this abbreviation ran. Defaults to 0.
+            ES (int, optional): Counter variable for the number of times the function equivalent to this abbreviation ran. Defaults to 0.
+            MDL (int, optional): Counter variable for the number of times the function equivalent to this abbreviation ran. Defaults to 0.
+            PDT (int, optional): Counter variable for the number of times the function equivalent to this abbreviation ran. Defaults to 0.
+        """
         self.maindir = maindir
         self.batfile = batfile
         self.txtfile = txtfile
@@ -68,7 +90,13 @@ class Files:
         self.mdl = MDL
         self.pdt = PDT
 
-    def starting(self, valuesDict: dict[str, list[str]], index: int):
+    def starting(self, valuesDict: dict[str, list[str]], index: int) -> None:
+        """TBA
+
+        Args:
+            valuesDict (dict[str, list[str]]): Dictionary containing all the values of the spreadsheet, spreadsheet headers are the keys and the respective rows are the values
+            index (int): Index of the relevant row to check
+        """
         print(f"Starting {valuesDict['Tipo de Formulário'][index]}")
         if self.batfile is not None:
             self.batfile.write(
@@ -76,7 +104,13 @@ class Files:
             )
         self.txtfile.write(f"{valuesDict['Tipo de Formulário'][index]}\n")
 
-    def hinos(self, valuesDict: dict[str, list[str]], index: int):
+    def hinos(self, valuesDict: dict[str, list[str]], index: int) -> None:
+        """Adds the values of 1st and 2nd hymn on a relevant row to the .txt file and the .bat file, if provided
+
+        Args:
+            valuesDict (dict[str, list[str]]): Dictionary containing all the values of the spreadsheet, spreadsheet headers are the keys and the respective rows are the values
+            index (int): Index of the relevant row to check
+        """
         for item in ("1° Hino", "2° Hino"):
             if self.batfile is not None:
                 if self.link_ver(valuesDict[item][index]):
@@ -90,25 +124,29 @@ class Files:
 
         self.txtfile.write("\n")
 
-    def ficheiros(self, valuesDict: dict[str, list[str]], index: int):
-        try:
-            if valuesDict["Ficheiros Necessários"][index] != "":
-                self.txtfile.write(
-                    f"{GoogleAPIs.driveapi(valuesDict['Ficheiros Necessários'][index], self.maindir)}\n\n"
-                )
-        except IndexError:
-            pass
+    def ficheiros(self, valuesDict: dict[str, list[str]], index: int) -> None:
+        """Downloads necessary files and writes the name of the file on the .txt file
+
+        Args:
+            valuesDict (dict[str, list[str]]): Dictionary containing all the values of the spreadsheet, spreadsheet headers are the keys and the respective rows are the values
+            index (int): Index of the relevant row to check
+        """
+
+        if valuesDict["Ficheiros Necessários"][index] != "":
+            self.txtfile.write(
+                f"{GoogleAPIs.driveapi(valuesDict['Ficheiros Necessários'][index], self.maindir)}\n\n"
+            )
 
     # ------------------------------------------------------
 
-    def Anúncios(self, valuesDict: dict[str, list[str]], index: int):
+    def Anúncios(self, valuesDict: dict[str, list[str]], index: int) -> None:
         if self.an == 0:
             self.an += 1
             self.starting(valuesDict, index)
             self.ficheiros(valuesDict, index)
             print()
 
-    def Culto(self, valuesDict: dict[str, list[str]], index: int):
+    def Culto(self, valuesDict: dict[str, list[str]], index: int) -> None:
         if self.c == 0:
             self.c += 1
             self.starting(valuesDict, index)
@@ -174,7 +212,7 @@ class Files:
             self.ficheiros(valuesDict, index)
             print()
 
-    def Escola_Sabatina(self, valuesDict: dict[str, list[str]], index: int):
+    def Escola_Sabatina(self, valuesDict: dict[str, list[str]], index: int) -> None:
         if self.es == 0:
             self.es += 1
             self.starting(valuesDict, index)
@@ -191,7 +229,7 @@ class Files:
             self.txtfile.write(f"Programa:\n{valuesDict['Programa'][index]}\n\n")
             print()
 
-    def Momentos_de_Louvor(self, valuesDict: dict[str, list[str]], index: int):
+    def Momentos_de_Louvor(self, valuesDict: dict[str, list[str]], index: int) -> None:
         if self.mdl == 0:
             self.mdl += 1
             self.starting(valuesDict, index)
@@ -199,7 +237,7 @@ class Files:
             self.ficheiros(valuesDict, index)
             print()
 
-    def Momento_Especial(self, valuesDict: dict[str, list[str]], index: int):
+    def Momento_Especial(self, valuesDict: dict[str, list[str]], index: int) -> None:
         if (
             self.dic["Momento Especial"][1][
                 valuesDict["Quando irá decorrer o Momento Especial?"][index]
@@ -223,7 +261,7 @@ class Files:
             )
             print()
 
-    def Programa_da_Tarde(self, valuesDict: dict[str, list[str]], index: int):
+    def Programa_da_Tarde(self, valuesDict: dict[str, list[str]], index: int) -> None:
         if self.pdt == 0:
             self.pdt += 1
             self.starting(valuesDict, index)

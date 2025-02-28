@@ -9,6 +9,7 @@ import sys
 class VersionManager:
     @staticmethod
     def getLatestTag() -> float:
+        """Returns the latest tag from the GitHub repo"""
         latestTagResponse = requests.get(
             "https://api.github.com/repos/lCarvas/iasdasheetchecker/releases/latest"
         )
@@ -20,11 +21,13 @@ class VersionManager:
 
     @staticmethod
     def getUpdate() -> None:
+        """Runs the updater"""
         startfile(path.abspath("updater.exe"))
         sys.exit()
 
     @staticmethod
     def download_file() -> None:
+        """Downloads the latest version of the program"""
         try:
             with requests.get(
                 "https://github.com/lcarvas/iasdasheetchecker/releases/latest/download/MMACP.exe"
@@ -44,15 +47,13 @@ class VersionManager:
                         if chunk:
                             bar.update(f.write(chunk))
 
-                f.close()
-                req.close()
-
         except Exception as e:
             print(e)
             return None
 
     @staticmethod
     def download_updater() -> None:
+        """Downloads the latest version of the updater"""
         try:
             with requests.get(
                 "https://github.com/lcarvas/iasdasheetchecker/releases/latest/download/updater.exe"
@@ -72,15 +73,13 @@ class VersionManager:
                         if chunk:
                             bar.update(f.write(chunk))
 
-                f.close()
-                req.close()
-
         except Exception as e:
             print(e)
             return None
 
     @staticmethod
     def verifyUpdater() -> None:
+        """Verifies the existance of the updater"""
         if not path.exists("./updater.exe"):
             print("Updater not found, downloading...")
             VersionManager.download_updater()

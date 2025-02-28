@@ -8,13 +8,25 @@ from files import Files
 import msvcrt
 from time import sleep
 from sys import exit
+from typing import Literal
 
 keyPressReturnValue = Queue()
 
 
 class UI:
     @staticmethod
-    def on_press(key, config: bool, updateAvailable: bool) -> None:
+    def on_press(key, config: bool, updateAvailable: bool) -> Literal[False]:
+        """Callback funtion to handle the actions of keypresses
+
+        Args:
+            key: Pressed key
+            config (bool): Currently active menu, True if the active menu is the Config menu
+            updateAvailable (bool): True if an update is available
+
+        Returns:
+            Literal[False]: Stops the listener instance
+        """
+
         if GetWindowText(GetForegroundWindow()) in [
             "MMACP",
             "main.py - iasdasheetchecker - Visual Studio Code",
@@ -74,6 +86,12 @@ class UI:
 
     @staticmethod
     def UIInteraction(config: bool, updateAvailable: bool) -> None:
+        """Starts a listener instance
+
+        Args:
+            config (bool): Currently active menu, True if the active menu is the Config menu
+            updateAvailable (bool): True if an update is available
+        """
         with Listener(
             on_press=lambda event: UI.on_press(event, config, updateAvailable),
         ) as listener:
@@ -81,6 +99,11 @@ class UI:
 
     @staticmethod
     def menuUI(updateAvailable: bool) -> None:
+        """Prints the main menu UI
+
+        Args:
+            updateAvailable (bool): True if an update is available
+        """
         system("cls" if name == "nt" else "clear")
         print(
             "\n███╗   ███╗███╗   ███╗ █████╗  ██████╗██████╗\n████╗ ████║████╗ ████║██╔══██╗██╔════╝██╔══██╗\n██╔████╔██║██╔████╔██║███████║██║     ██████╔╝\n██║╚██╔╝██║██║╚██╔╝██║██╔══██║██║     ██╔═══╝\n██║ ╚═╝ ██║██║ ╚═╝ ██║██║  ██║╚██████╗██║\n╚═╝     ╚═╝╚═╝     ╚═╝╚═╝  ╚═╝ ╚═════╝╚═╝\n\n"
@@ -100,6 +123,11 @@ class UI:
 
     @staticmethod
     def configUI(updateAvailable: bool) -> None:
+        """Prints the config menu UI
+
+        Args:
+            updateAvailable (bool): True if an update is available
+        """
         system("cls" if name == "nt" else "clear")
         print(
             "\n███████╗███████╗████████╗████████╗██╗███╗   ██╗ ██████╗ ███████╗\n██╔════╝██╔════╝╚══██╔══╝╚══██╔══╝██║████╗  ██║██╔════╝ ██╔════╝\n███████╗█████╗     ██║      ██║   ██║██╔██╗ ██║██║  ███╗███████╗\n╚════██║██╔══╝     ██║      ██║   ██║██║╚██╗██║██║   ██║╚════██║\n███████║███████╗   ██║      ██║   ██║██║ ╚████║╚██████╔╝███████║\n╚══════╝╚══════╝   ╚═╝      ╚═╝   ╚═╝╚═╝  ╚═══╝ ╚═════╝ ╚══════╝\n\n"
@@ -112,7 +140,13 @@ class UI:
         print("[0] Return")
         UI.UIInteraction(True, updateAvailable)
 
+    @staticmethod
     def mainUI(updateAvailable: bool) -> None:
+        """Starts the main menu UI and runs actions based on the key pressed
+
+        Args:
+            updateAvailable (bool): True if an update is available
+        """
         UI.menuUI(updateAvailable)
         while True:
             returnValue: str = keyPressReturnValue.get()

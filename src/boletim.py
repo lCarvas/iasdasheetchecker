@@ -12,6 +12,7 @@ from typing import Any
 class Boletim:
     @staticmethod
     def getlinklist() -> list[Any]:
+        """Returns a list of links from the boletim website relevant to the current trimester and year"""
         linklist: list[Any] = []
         r: bytes | Any = requests.get(
             "https://recursos.adventistas.org.pt/escolasabatina/videos/boletim-missionario-{}-o-trimestre-de-{}/".format(
@@ -33,14 +34,18 @@ class Boletim:
 
     @staticmethod
     def linksyaml() -> None:
+        """Creates/Updates a yaml file whose keys are the dates corresponding to the values that are the boletim download links relevant to the current year and trimester and"""
         yamllist = dict(zip(DateTools.trimsat(), Boletim.getlinklist()))
         with open(path.abspath("config/links.yaml"), "w", encoding="utf-8") as f:
-            yaml.dump(yamllist, f, sort_keys=False)
-
-        f.close()
+            yaml.safe_dump(yamllist, f, sort_keys=False)
 
     @staticmethod
     def downloadboletim(fmaindir: str):
+        """Downloads the relevant boletim correspondent to the closest saturday
+
+        Args:
+            fmaindir (str): Working directory
+        """
         with open(path.abspath("config/links.yaml"), "r", encoding="utf-8") as f:
             links = yaml.safe_load(f)
 
@@ -62,19 +67,17 @@ class Boletim:
                     if chunk:
                         bar.update(f.write(chunk))
 
-        req.close()
-        f.close()
-
     @staticmethod
     def checkfinaldate() -> str:
+        """Returns the last date present on the yaml files"""
         with open(path.abspath("config/links.yaml"), "r", encoding="utf-8") as f:
             links: dict[str, str] = yaml.safe_load(f)
             finaldate: str = list(links.keys())[-1]
-        f.close()
         return finaldate
 
     @staticmethod
     def verifyLinks() -> None:
+        """Verifies the validity of the links yaml file, if the files does not exist or the current date is past the last date present on the file, requests a new links yaml file"""
         if (
             not path.exists("./config/links.yaml")
             or DateTools.satcalc(DateTools.today)
