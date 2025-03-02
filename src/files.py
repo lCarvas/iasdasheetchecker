@@ -61,11 +61,6 @@ class Files:
         batfile: TextIO | None,
         txtfile: TextIO,
         dic: dict[str, str | list[str | dict[str, int]]],
-        AN: int = 0,
-        C: int = 0,
-        ES: int = 0,
-        MDL: int = 0,
-        PDT: int = 0,
     ):
         """Contructor
 
@@ -73,22 +68,25 @@ class Files:
             maindir (str): Working directory
             batfile (TextIO | None): .bat file
             txtfile (TextIO): .txt file
-            dic (dict[str, str  |  list[str  |  dict[str, int]]]): Dictionary containing all form types and respective abbreviations. Also contains a counter dict for ME Types
-            AN (int, optional): Counter variable for the number of times the function equivalent to this abbreviation ran. Defaults to 0.
-            C (int, optional): Counter variable for the number of times the function equivalent to this abbreviation ran. Defaults to 0.
-            ES (int, optional): Counter variable for the number of times the function equivalent to this abbreviation ran. Defaults to 0.
-            MDL (int, optional): Counter variable for the number of times the function equivalent to this abbreviation ran. Defaults to 0.
-            PDT (int, optional): Counter variable for the number of times the function equivalent to this abbreviation ran. Defaults to 0.
+            dic (dict[str, str): Dictionary containing all form types and respective abbreviations.
         """
         self.maindir = maindir
         self.batfile = batfile
         self.txtfile = txtfile
         self.dic = dic
-        self.an = AN
-        self.c = C
-        self.es = ES
-        self.mdl = MDL
-        self.pdt = PDT
+        self.typeSet: set[str] = {
+            "Culto",
+            "Escola Sabatina",
+            "Anúncios",
+            "Momentos de Louvor",
+            "Momento Especial",
+            "Programa da Tarde",
+            "Durante a Escola Sabatina",
+            "Após a Escola Sabatina",
+            "Antes do Culto (Após os Anúncios)",
+            "Durante o Culto",
+            "Após o Culto",
+        }
 
     def starting(self, valuesDict: dict[str, list[str]], index: int) -> None:
         """TBA
@@ -140,15 +138,15 @@ class Files:
     # ------------------------------------------------------
 
     def Anúncios(self, valuesDict: dict[str, list[str]], index: int) -> None:
-        if self.an == 0:
-            self.an += 1
+        if "Anúncios" in self.typeSet:
+            self.typeSet.remove("Anúncios")
             self.starting(valuesDict, index)
             self.ficheiros(valuesDict, index)
             print()
 
     def Culto(self, valuesDict: dict[str, list[str]], index: int) -> None:
-        if self.c == 0:
-            self.c += 1
+        if "Culto" in self.typeSet:
+            self.typeSet.remove("Culto")
             self.starting(valuesDict, index)
             self.hinos(valuesDict, index)
 
@@ -213,8 +211,11 @@ class Files:
             print()
 
     def Escola_Sabatina(self, valuesDict: dict[str, list[str]], index: int) -> None:
-        if self.es == 0:
-            self.es += 1
+        if (
+            temp := valuesDict["Tipo de Formulário"][index].replace(" ", "_")
+            in self.typeSet
+        ):
+            self.typeSet.remove(temp)
             self.starting(valuesDict, index)
             self.hinos(valuesDict, index)
             self.ficheiros(valuesDict, index)
@@ -273,21 +274,12 @@ class Files:
 
     def filesMain() -> None:
         # ----- start of file creation -----
-        dic: dict[str, str | list[str | dict[str, int]]] = {
+        dic: dict[str, str] = {
             "Anúncios": "AN",
             "Culto": "C",
             "Escola Sabatina": "ES",
             "Momentos de Louvor": "MDL",
-            "Momento Especial": [
-                "ME",
-                {
-                    "Durante a Escola Sabatina": 0,
-                    "Após a Escola Sabatina": 0,
-                    "Antes do Culto (Após os Anúncios)": 0,
-                    "Durante o Culto": 0,
-                    "Após o Culto": 0,
-                },
-            ],
+            "Momento Especial": "ME",
             "Programa da Tarde": "PDT",
         }
 
@@ -334,7 +326,7 @@ class Files:
             files = Files(maindir, batfile, txtfile, dic)
 
             for index, value in enumerate(valuesDict["Sábado"]):
-                if DateTools.today >= datetime.strptime(value, "%d/%m/%Y").date():
+                if DateTools.today > datetime.strptime(value, "%d/%m/%Y").date():
                     break
 
                 getattr(
